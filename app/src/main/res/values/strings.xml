@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">FingoDriverLibrary</string>
+    <string name="operation_accepted">Operation Accepted</string>
+    <string name="amount">Amount</string>
+    <string name="eur">EUR</string>
+    <string name="operation_declined">Operation Declined</string>
+</resources>

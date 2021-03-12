@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFF">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="35dp"
+        android:id="@+id/operationAcceptedAmountLayout"
+        android:textAlignment="center"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:visibility="invisible">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/transactionCurrency"
+            android:fontFamily="@font/montserrat_bold"
+            android:textSize="40.67sp"
+            android:textColor="@color/fingo_purple"
+            android:textStyle="bold"
+            android:gravity="center">
+
+        </TextView>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/transactionAmount"
+            android:fontFamily="@font/montserrat_bold"
+            android:textSize="46.67sp"
+            android:textColor="@color/fingo_purple"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:text="35,94">
+
+        </TextView>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/montserrat_medium"
+            android:textSize="20sp"
+            android:textColor="@color/fingo_purple"
+            android:gravity="center">
+
+        </TextView>
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:id="@+id/circleRelativeLayout">
+
+        <View
+            android:id="@+id/ctls_operation_accepted_oval"
+            android:layout_width="305dp"
+            android:layout_height="305dp"
+            android:layout_centerInParent="true"
+            android:background="@drawable/operation_accepted_oval_background" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <ImageView
+                android:id="@+id/operationAcceptedCorrectIcon"
+                android:layout_width="86dp"
+                android:layout_height="83dp"
+                android:layout_marginTop="-15dp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_baseline_check_200" >
+
+            </ImageView>
+
+            <TextView
+                android:id="@+id/operationAccepted"
+                android:layout_width="183dp"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:fontFamily="@font/montserrat_medium"
+                android:text="@string/operation_accepted"
+                android:textAlignment="center"
+                android:textStyle="bold"
+                android:textColor="@android:color/white"
+                android:textSize="26.67sp" />
+
+        </LinearLayout>
+
+    </RelativeLayout>
+</RelativeLayout>

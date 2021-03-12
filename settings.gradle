@@ -1,0 +1,4 @@
+include ':fingo_client'
+include ':FingoDriver'
+include ':app'
+rootProject.name = "FingoDriverLibrary"
