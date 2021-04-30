@@ -32,11 +32,11 @@ public interface FingoContract
     }
 
     interface Model{
-        void invoke(FingoOperation fingoOperation, boolean forceOnline);
-        void identify(boolean forceOnline);
-        void enroll(boolean forceOnline);
-        void payment(int totalAmount, FingoCurrency fingoCurrency, int totalDiscount, PosData posData, boolean forceOnline);
-        void refund(int refundAmount, String transactionIdToRefund, String gatewayTransactionIdToRefund, TerminalData terminalData, boolean forceOnline);
+        void invoke(FingoOperation fingoOperation);
+        void identify();
+        void enroll(int delayBetweenScanningInMilliSeconds);
+        void payment(int totalAmount, FingoCurrency fingoCurrency, int totalDiscount, PosData posData);
+        void refund(int refundAmount, String transactionIdToRefund, String gatewayTransactionIdToRefund, TerminalData terminalData);
         void cancel();
         boolean isDeviceConnected();
         boolean isOperationCancelled();

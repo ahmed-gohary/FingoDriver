@@ -28,43 +28,27 @@ public class FingoPresenter implements FingoContract.Presenter
     }
 
     public void identify(){
-        identify(true);
+        executeIdentify();
     }
 
-    public void identify(boolean forceOnline){
-        execute(FingoOperation.IDENTIFY, forceOnline);
-    }
-
-    public void enroll(){
-        enroll(true);
-    }
-
-    public void enroll(boolean forceOnline){
-        execute(FingoOperation.ENROLLMENT, forceOnline);
+    public void enroll(int delayBetweenScanningInMilliSeconds){
+        executeEnrollment(delayBetweenScanningInMilliSeconds);
     }
 
     public void payment(int totalAmount, FingoCurrency fingoCurrency, int totalDiscount, PosData posData){
-        payment(totalAmount, fingoCurrency, totalDiscount, posData, true);
-    }
-
-    public void payment(int totalAmount, FingoCurrency fingoCurrency, int totalDiscount, PosData posData, boolean forceOnline){
         new Thread(() -> {
-            this.model.invoke(FingoOperation.PAYMENT, forceOnline);
+            this.model.invoke(FingoOperation.PAYMENT);
             if(! this.model.isOperationCancelled()){
-                this.model.payment(totalAmount, fingoCurrency, totalDiscount, posData, forceOnline);
+                this.model.payment(totalAmount, fingoCurrency, totalDiscount, posData);
             }
         }).start();
     }
 
     public void refund(int refundAmount, String transactionIdToRefund, String gatewayTransactionIdToRefund, TerminalData terminalData){
-        refund(refundAmount, transactionIdToRefund, gatewayTransactionIdToRefund, terminalData, true);
-    }
-
-    public void refund(int refundAmount, String transactionIdToRefund, String gatewayTransactionIdToRefund, TerminalData terminalData, boolean forceOnline){
         new Thread(() -> {
-            this.model.invoke(FingoOperation.REFUND, forceOnline);
+            this.model.invoke(FingoOperation.REFUND);
             if(! this.model.isOperationCancelled()){
-                this.model.refund(refundAmount, transactionIdToRefund, gatewayTransactionIdToRefund, terminalData, forceOnline);
+                this.model.refund(refundAmount, transactionIdToRefund, gatewayTransactionIdToRefund, terminalData);
             }
         }).start();
     }
@@ -86,20 +70,20 @@ public class FingoPresenter implements FingoContract.Presenter
         return this.model.isOperationCancelled();
     }
 
-    private void execute(FingoOperation fingoOperation, boolean forceOnline){
+    private void executeIdentify(){
         new Thread(() -> {
-            this.model.invoke(fingoOperation, forceOnline);
+            this.model.invoke(FingoOperation.IDENTIFY);
             if(! this.model.isOperationCancelled()){
-                switch (fingoOperation){
-                    case IDENTIFY:{
-                        this.model.identify(forceOnline);
-                        break;
-                    }
-                    case ENROLLMENT:{
-                        this.model.enroll(forceOnline);
-                        break;
-                    }
-                }
+                this.model.identify();
+            }
+        }).start();
+    }
+
+    private void executeEnrollment(int delayBetweenScanningInMilliSeconds){
+        new Thread(() -> {
+            this.model.invoke(FingoOperation.ENROLLMENT);
+            if(! this.model.isOperationCancelled()){
+                this.model.enroll(delayBetweenScanningInMilliSeconds);
             }
         }).start();
     }
