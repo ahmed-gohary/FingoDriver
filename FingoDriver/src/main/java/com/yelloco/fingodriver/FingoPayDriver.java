@@ -39,7 +39,7 @@ public class FingoPayDriver
 
     private FingoPayDriver(){
         this.fingoDevice = new FingoDevice();
-        CONSECUTIVE_SCAN_RESTING_INTERVAL = Storage.getInstance().getInt(StorageKey.CONSECUTIVE_SCAN_INTERVAL.name(), FingoConstants.ONE_SECOND)
+        CONSECUTIVE_SCAN_RESTING_INTERVAL = Storage.getInstance().getInt(StorageKey.CONSECUTIVE_SCAN_INTERVAL.name(), FingoConstants.ONE_SECOND);
     }
 
     public static FingoPayDriver getInstance() {
