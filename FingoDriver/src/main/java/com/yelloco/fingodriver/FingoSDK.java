@@ -10,6 +10,8 @@ import android.hardware.usb.UsbManager;
 import android.util.Log;
 
 import com.yelloco.fingodriver.enums.FingoErrorCode;
+import com.yelloco.fingodriver.enums.StorageKey;
+import com.yelloco.fingodriver.utils.Storage;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -36,6 +38,8 @@ public class FingoSDK
         }
 
         FingoSDK.context = context;
+
+        Storage.getInstance().initialize(context);
 
         UsbManager usbManager = (UsbManager) context.getSystemService(Context.USB_SERVICE);
 
@@ -81,6 +85,13 @@ public class FingoSDK
                 }
             }
         }
+    }
+
+    public static void setConsecutiveScanInterval(int delayInMillis){
+        if(delayInMillis < FingoConstants.ONE_SECOND){
+            delayInMillis = FingoConstants.ONE_SECOND;
+        }
+        Storage.getInstance().storeInt(StorageKey.CONSECUTIVE_SCAN_INTERVAL.name(), delayInMillis);
     }
 
     public static String about(){

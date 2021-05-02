@@ -10,10 +10,12 @@ import com.hitachi.fv.android.h1client.CryptoAlg;
 import com.hitachi.fv.android.h1client.H1Client;
 import com.hitachi.fv.android.h1client.H1ClientException;
 import com.hitachi.fv.android.h1client.SecurityLevel;
+import com.yelloco.fingodriver.enums.StorageKey;
 import com.yelloco.fingodriver.models.FingoDevice;
 import com.yelloco.fingodriver.callbacks.FingoCaptureCallback;
 import com.yelloco.fingodriver.models.events.DeviceDetachedEvent;
 import com.yelloco.fingodriver.enums.FingoErrorCode;
+import com.yelloco.fingodriver.utils.Storage;
 
 import org.greenrobot.eventbus.Subscribe;
 
@@ -24,7 +26,7 @@ public class FingoPayDriver
     // Constants
     private static final String TAG = FingoPayDriver.class.getSimpleName();
     private static final int DEFAULT_TIMEOUT = 10000;
-    private static final int CONSECUTIVE_SCAN_RESTING = 5000;
+    private final int CONSECUTIVE_SCAN_RESTING_INTERVAL;
     private final Object lock = new Object();
     private static FingoPayDriver fingoPayDriver = new FingoPayDriver();
 
@@ -36,7 +38,8 @@ public class FingoPayDriver
     private boolean isLockActive;
 
     private FingoPayDriver(){
-        fingoDevice = new FingoDevice();
+        this.fingoDevice = new FingoDevice();
+        CONSECUTIVE_SCAN_RESTING_INTERVAL = Storage.getInstance().getInt(StorageKey.CONSECUTIVE_SCAN_INTERVAL.name(), FingoConstants.ONE_SECOND)
     }
 
     public static FingoPayDriver getInstance() {
@@ -280,7 +283,7 @@ public class FingoPayDriver
     private void activateIntervalBetweenCaptureSessions(){
         new Thread(() -> {
             Log.d(TAG, "Scanner going to rest");
-            SystemClock.sleep(CONSECUTIVE_SCAN_RESTING);
+            SystemClock.sleep(CONSECUTIVE_SCAN_RESTING_INTERVAL);
             scannerResting = false;
             synchronized (lock){
                 if(isLockActive){

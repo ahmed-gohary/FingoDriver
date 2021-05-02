@@ -85,21 +85,6 @@ public class FingoModel implements FingoContract.Model
     public void invoke(FingoOperation fingoOperation, boolean forceOnline){
         operationCancelled = false;
         this.presenter.onProcessingStarted();
-        if(fingoOperation.equals(FingoOperation.IDENTIFY)){
-            this.presenter.onDisplayTextRequested(this.buildDisplayTextRequested(R.string.please_prepare_to_scan_finger_identify));
-        }
-        else if(fingoOperation.equals(FingoOperation.ENROLLMENT)){
-            this.presenter.onDisplayTextRequested(this.buildDisplayTextRequested(R.string.please_prepare_to_scan_finger_enroll));
-        }
-        else if(fingoOperation.equals(FingoOperation.PAYMENT)){
-            this.presenter.onDisplayTextRequested(this.buildDisplayTextRequested(R.string.please_prepare_to_scan_finger_payment));
-        }
-        else if(fingoOperation.equals(FingoOperation.REFUND)){
-            this.presenter.onDisplayTextRequested(this.buildDisplayTextRequested(R.string.please_prepare_to_scan_finger_refund));
-        }
-
-        SystemClock.sleep(FingoConstants.THREE_SECONDS);
-
         this.presenter.onDisplayTextRequested(this.buildDisplayTextRequested(R.string.please_insert_finger));
     }
 
