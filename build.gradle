@@ -5,7 +5,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.0.1'
+        classpath 'com.android.tools.build:gradle:4.1.0'
         classpath 'com.kezong:fat-aar:1.3.4'            // used for including aar inside the generated android library
 
         // NOTE: Do not place your application dependencies here; they belong
