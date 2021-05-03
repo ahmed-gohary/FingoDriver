@@ -2,6 +2,7 @@ package com.yelloco.fingodriver.repository;
 
 import android.app.Activity;
 
+import com.yelloco.fingodriver.FingoSDK;
 import com.yelloco.fingodriver.callbacks.FingoContract;
 import com.yelloco.fingodriver.enums.FingoCurrency;
 import com.yelloco.fingodriver.enums.FingoOperation;
@@ -20,6 +21,7 @@ public class FingoPresenter implements FingoContract.Presenter
     private FingoContract.FingoListener fingoListener;
     private FingoContract.Model model;
     private Activity activity;
+    private boolean canProceed;
 
     public FingoPresenter(Activity activity, FingoContract.FingoListener fingoListener){
         this.activity = activity;

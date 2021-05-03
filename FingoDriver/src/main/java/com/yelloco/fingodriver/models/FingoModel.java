@@ -11,11 +11,13 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.yelloco.fingodriver.FingoConstants;
 import com.yelloco.fingodriver.FingoPayDriver;
+import com.yelloco.fingodriver.FingoSDK;
 import com.yelloco.fingodriver.R;
 import com.yelloco.fingodriver.callbacks.FingoContract;
 import com.yelloco.fingodriver.enums.FingoCurrency;
 import com.yelloco.fingodriver.enums.FingoKeys;
 import com.yelloco.fingodriver.enums.FingoOperation;
+import com.yelloco.fingodriver.enums.StorageKey;
 import com.yelloco.fingodriver.models.fingo_operation.DisplayTextRequested;
 import com.yelloco.fingodriver.models.fingo_operation.IdentifyData;
 import com.yelloco.fingodriver.models.fingo_operation.PaymentData;
@@ -23,6 +25,7 @@ import com.yelloco.fingodriver.models.fingo_operation.ProcessingFinished;
 import com.yelloco.fingodriver.models.networking.Enrollment.EnrollmentApi;
 import com.yelloco.fingodriver.models.networking.Enrollment.EnrollmentRequest;
 import com.yelloco.fingodriver.models.networking.Enrollment.EnrollmentResponse;
+import com.yelloco.fingodriver.models.networking.FingoRequestHelper;
 import com.yelloco.fingodriver.models.networking.fingo_error.FingoErrorObject;
 import com.yelloco.fingodriver.models.networking.fingo_error.FingoErrorResponse;
 import com.yelloco.fingodriver.models.networking.identify.IdentifyApi;
@@ -37,10 +40,13 @@ import com.yelloco.fingodriver.models.networking.refund.RefundApi;
 import com.yelloco.fingodriver.models.networking.refund.RefundRequest;
 import com.yelloco.fingodriver.models.networking.refund.RefundResponse;
 import com.yelloco.fingodriver.models.networking.refund.TerminalData;
+import com.yelloco.fingodriver.utils.Storage;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -55,8 +61,10 @@ public class FingoModel implements FingoContract.Model
     // Members
     private Context context;
     private FingoContract.Presenter presenter;
+    private boolean canProceed;
     private boolean operationCancelled;
     private FingoPayDriver fingoPayDriver;
+    private FingoRequestHelper fingoRequestHelper;
     private Retrofit retrofit;
     private EnrollmentApi enrollmentApi;
     private Call<EnrollmentResponse> enrollmentResponseCall;
@@ -70,9 +78,11 @@ public class FingoModel implements FingoContract.Model
     public FingoModel(FingoContract.Presenter presenter, Context context){
         this.context = context;
         this.presenter = presenter;
+        this.canProceed = FingoSDK.isSdkInitialized();
         this.fingoPayDriver = FingoPayDriver.getInstance();
+        this.fingoRequestHelper = new FingoRequestHelper();
         this.retrofit = new Retrofit.Builder()
-                .baseUrl(FingoKeys.FINGO_CLOUD_BASE_URL.getValue())
+                .baseUrl(fingoRequestHelper.getFingoCloudBaseUrl())
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
@@ -85,7 +95,13 @@ public class FingoModel implements FingoContract.Model
     public void invoke(FingoOperation fingoOperation, boolean forceOnline){
         operationCancelled = false;
         this.presenter.onProcessingStarted();
-        this.presenter.onDisplayTextRequested(this.buildDisplayTextRequested(R.string.please_insert_finger));
+
+        if(! this.canProceed){
+            this.presenter.onProcessingFinished(this.buildProcessingFinishedEvent(false, FingoErrorCode.H1_SDK_INIT_FAILED_BLOCKED));
+        }
+        else{
+            this.presenter.onDisplayTextRequested(this.buildDisplayTextRequested(R.string.please_insert_finger));
+        }
     }
 
     /**
@@ -355,7 +371,7 @@ public class FingoModel implements FingoContract.Model
         IdentifyRequest identifyRequest = new IdentifyRequest();
         identifyRequest.setVerificationTemplate(verificationTemplate);
 
-        identifyResponseCall = identifyApi.identify(identifyRequest);
+        identifyResponseCall = identifyApi.identify(fingoRequestHelper.getHeaders(), identifyRequest);
 
         identifyResponseCall.enqueue(new Callback<IdentifyResponse>() {
             @Override
@@ -393,7 +409,7 @@ public class FingoModel implements FingoContract.Model
         enrollmentRequest.setEnrolmentTemplate(enrollmentTemplate);
         enrollmentRequest.setVerificationTemplate(verificationTemplate);
 
-        enrollmentResponseCall = enrollmentApi.enrol(enrollmentRequest);
+        enrollmentResponseCall = enrollmentApi.enrol(fingoRequestHelper.getHeaders(), enrollmentRequest);
 
         enrollmentResponseCall.enqueue(new Callback<EnrollmentResponse>() {
             @Override
@@ -427,7 +443,7 @@ public class FingoModel implements FingoContract.Model
 
     private void payWithVeinIdAtFingoCloud(int totalAmount, FingoCurrency fingoCurrency, int totalDiscount, PosData posData, String verificationTemplate){
         PaymentRequest paymentRequest = new PaymentRequest();
-        paymentRequest.setMerchantId(FingoKeys.FINGO_MERCHANT_ID.getValue());
+        paymentRequest.setMerchantId(fingoRequestHelper.getMerchantId());
         paymentRequest.setVerificationTemplate(verificationTemplate);
         paymentRequest.setTotalAmount(totalAmount);
         paymentRequest.setTotalDiscount(totalDiscount);
@@ -436,7 +452,7 @@ public class FingoModel implements FingoContract.Model
 
 //        Log.d(TAG, "PaymentRequest:\n" + paymentRequest.toString());
 
-        paymentResponseCall = paymentApi.pay(paymentRequest);
+        paymentResponseCall = paymentApi.pay(fingoRequestHelper.getHeaders(), paymentRequest);
 
         paymentResponseCall.enqueue(new Callback<PaymentResponse>() {
             @Override
@@ -458,7 +474,7 @@ public class FingoModel implements FingoContract.Model
 
     private void refundWithVeinIdAtFingoCloud(int refundAmount, String transactionIdToRefund, String gatewayTransactionIdToRefund, TerminalData terminalData, String verificationTemplate){
         RefundRequest refundRequest = new RefundRequest();
-        refundRequest.setMerchantId(FingoKeys.FINGO_MERCHANT_ID.getValue());
+        refundRequest.setMerchantId(fingoRequestHelper.getMerchantId());
         refundRequest.setVerificationTemplate(verificationTemplate);
         refundRequest.setRefundAmount(refundAmount);
         refundRequest.setTransactionIdToRefund(transactionIdToRefund);
@@ -467,7 +483,7 @@ public class FingoModel implements FingoContract.Model
 
 //        Log.d(TAG, "PaymentRequest:\n" + paymentRequest.toString());
 
-        refundResponseCall = refundApi.refund(refundRequest);
+        refundResponseCall = refundApi.refund(fingoRequestHelper.getHeaders(), refundRequest);
 
         refundResponseCall.enqueue(new Callback<RefundResponse>() {
             @Override

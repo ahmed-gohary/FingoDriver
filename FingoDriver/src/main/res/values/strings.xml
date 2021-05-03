@@ -8,9 +8,16 @@
     <string name="fingo_error_capture_failed">Capture Session Failed</string>
     <string name="fingo_error_not_capturing">Fingo Device Not Capturing</string>
     <string name="fingo_error_unexpected">Fingo Unexpected Error</string>
+    <string name="fingo_error_device_disconnected_during_scanning">Fingo Device disconnected during scanning</string>
     <string name="fingo_error_interface_error">Fingo Interface Error</string>
     <string name="fingo_error_template_seed_error">Template seed key not set</string>
     <string name="fingo_error_invalid_enrollment_data_error">Invalid Enrollment Data</string>
+    <string name="fingo_error_invalid_cloud_url">Invalid Fingo Cloud URL</string>
+    <string name="fingo_error_invalid_partner_id">Invalid Fingo Partner ID</string>
+    <string name="fingo_error_invalid_merchant_id">Invalid Merchant ID</string>
+    <string name="fingo_error_invalid_terminal_id">Invalid Terminal ID</string>
+    <string name="fingo_error_invalid_api_key">Invalid API Key</string>
+    <string name="fingo_error_invalid_template_key">Invalid Template Seed Key</string>
     <string name="fingo_error_crypto_error">Encryption Error</string>
     <string name="fingo_error_memory_error">Memory Error</string>
     <string name="fingo_error_invalid_parameter">Invalid Parameters Specified</string>
@@ -22,6 +29,7 @@
     <string name="fingo_error_online_enrollment_error">Online Enrollment Failed</string>
     <string name="fingo_error_online_payment_error">Online Payment Failed</string>
     <string name="fingo_error_online_refund_error">Online Refund Failed</string>
+    <string name="fingo_error_sdk_init_failed_can_not_proceed">SDK initialization failed can not proceed</string>
 
     <string name="please_prepare_to_scan_finger_identify">Please Prepare to scan your finger 1 time for identification</string>
     <string name="please_prepare_to_scan_finger_enroll">Please Prepare to scan your finger 3 times for enrollment</string>
