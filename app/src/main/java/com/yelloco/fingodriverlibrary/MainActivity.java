@@ -15,6 +15,7 @@ import com.yelloco.fingodriver.FingoConstants;
 import com.yelloco.fingodriver.FingoPayDriver;
 import com.yelloco.fingodriver.FingoSDK;
 import com.yelloco.fingodriver.callbacks.FingoContract;
+import com.yelloco.fingodriver.enums.Currency;
 import com.yelloco.fingodriver.enums.FingoCurrency;
 import com.yelloco.fingodriver.models.fingo_operation.DisplayTextRequested;
 import com.yelloco.fingodriver.models.fingo_operation.IdentifyData;
@@ -92,7 +93,7 @@ public class MainActivity extends AppCompatActivity implements FingoContract.Fin
             @Override
             public void onClick(View view) {
                 PosData posData = new PosData("2", "Cairo");
-                fingoPresenter.payment(200, FingoCurrency.GBP, 0,posData, TIMEOUT);
+                fingoPresenter.payment(200, Currency.GBP, 0,posData, TIMEOUT);
             }
         });
 

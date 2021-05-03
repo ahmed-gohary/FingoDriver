@@ -1,6 +1,6 @@
 package com.yelloco.fingodriver.enums;
 
-public enum FingoCurrency
+public enum Currency
 {
     GBP
 }

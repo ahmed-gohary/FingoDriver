@@ -3,7 +3,7 @@ package com.yelloco.fingodriver.repository;
 import android.app.Activity;
 
 import com.yelloco.fingodriver.callbacks.FingoContract;
-import com.yelloco.fingodriver.enums.FingoCurrency;
+import com.yelloco.fingodriver.enums.Currency;
 import com.yelloco.fingodriver.enums.FingoOperation;
 import com.yelloco.fingodriver.models.FingoModel;
 import com.yelloco.fingodriver.models.fingo_operation.DisplayTextRequested;
@@ -35,11 +35,11 @@ public class FingoPresenter implements FingoContract.Presenter
         execute(FingoOperation.ENROLLMENT, timeoutInMillis);
     }
 
-    public void payment(int totalAmount, FingoCurrency fingoCurrency, int totalDiscount, PosData posData, int timeoutInMillis){
+    public void payment(int totalAmount, Currency currency, int totalDiscount, PosData posData, int timeoutInMillis){
         new Thread(() -> {
             this.model.invoke(FingoOperation.PAYMENT);
             if(! this.model.isOperationCancelled()){
-                this.model.payment(totalAmount, fingoCurrency, totalDiscount, posData, timeoutInMillis);
+                this.model.payment(totalAmount, currency, totalDiscount, posData, timeoutInMillis);
             }
         }).start();
     }

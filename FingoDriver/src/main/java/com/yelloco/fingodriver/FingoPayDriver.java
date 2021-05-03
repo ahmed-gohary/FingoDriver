@@ -320,6 +320,7 @@ public class FingoPayDriver
             Log.d(TAG, "Device disconnected cancelling: " + cancelErrorCode.name());
             FingoErrorCode closeErrorCode = this.closeDevice();
             Log.d(TAG, "Device disconnected: " + closeErrorCode.name());
+            this.fingoDevice.setDeviceOpened(false);
         }
     }
 }

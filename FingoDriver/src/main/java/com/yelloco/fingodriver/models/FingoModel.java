@@ -14,10 +14,9 @@ import com.yelloco.fingodriver.FingoPayDriver;
 import com.yelloco.fingodriver.FingoSDK;
 import com.yelloco.fingodriver.R;
 import com.yelloco.fingodriver.callbacks.FingoContract;
-import com.yelloco.fingodriver.enums.FingoCurrency;
+import com.yelloco.fingodriver.enums.Currency;
 import com.yelloco.fingodriver.enums.FingoKeys;
 import com.yelloco.fingodriver.enums.FingoOperation;
-import com.yelloco.fingodriver.enums.StorageKey;
 import com.yelloco.fingodriver.models.fingo_operation.DisplayTextRequested;
 import com.yelloco.fingodriver.models.fingo_operation.IdentifyData;
 import com.yelloco.fingodriver.models.fingo_operation.PaymentData;
@@ -40,13 +39,9 @@ import com.yelloco.fingodriver.models.networking.refund.RefundApi;
 import com.yelloco.fingodriver.models.networking.refund.RefundRequest;
 import com.yelloco.fingodriver.models.networking.refund.RefundResponse;
 import com.yelloco.fingodriver.models.networking.refund.TerminalData;
-import com.yelloco.fingodriver.utils.Storage;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -261,7 +256,7 @@ public class FingoModel implements FingoContract.Model
      *  to be used in the payment operation
      */
     @Override
-    public void payment(int totalAmount, FingoCurrency fingoCurrency, int totalDiscount, PosData posData, int timeoutInMillis){
+    public void payment(int totalAmount, Currency currency, int totalDiscount, PosData posData, int timeoutInMillis){
         Log.d(TAG, "Starting payment process");
 
         Pair<FingoErrorCode, byte[]> captureSession = this.fingoPayDriver.capture(timeoutInMillis);
@@ -281,7 +276,7 @@ public class FingoModel implements FingoContract.Model
         if(verificationTemplate.first.equals(FingoErrorCode.H1_OK)){
             Log.i(TAG, "VerificationTemplate generation completed:\n" + verificationTemplate.second);
             if(context.checkSelfPermission(Manifest.permission.INTERNET) == PackageManager.PERMISSION_GRANTED){
-                payWithVeinIdAtFingoCloud(totalAmount, fingoCurrency, totalDiscount, posData, verificationTemplate.second);
+                payWithVeinIdAtFingoCloud(totalAmount, currency, totalDiscount, posData, verificationTemplate.second);
             }
             else{
                 this.presenter.onDisplayTextRequested(buildDisplayTextRequested(FingoErrorCode.H1_INTERNET_PERMISSION_NOT_GRANTED.getDescriptionResId()));
@@ -422,14 +417,14 @@ public class FingoModel implements FingoContract.Model
         });
     }
 
-    private void payWithVeinIdAtFingoCloud(int totalAmount, FingoCurrency fingoCurrency, int totalDiscount, PosData posData, String verificationTemplate){
+    private void payWithVeinIdAtFingoCloud(int totalAmount, Currency currency, int totalDiscount, PosData posData, String verificationTemplate){
         PaymentRequest paymentRequest = new PaymentRequest();
         paymentRequest.setMerchantId(fingoRequestHelper.getMerchantId());
         paymentRequest.setVerificationTemplate(verificationTemplate);
         paymentRequest.setTotalAmount(totalAmount);
         paymentRequest.setTotalDiscount(totalDiscount);
         paymentRequest.setPosData(posData);
-        paymentRequest.setCurrency(fingoCurrency.name());
+        paymentRequest.setCurrency(currency.name());
 
         Log.d(TAG, "PaymentRequest:\n" + paymentRequest.toString());
 

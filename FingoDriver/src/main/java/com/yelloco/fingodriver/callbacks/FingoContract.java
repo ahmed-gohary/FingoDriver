@@ -1,6 +1,6 @@
 package com.yelloco.fingodriver.callbacks;
 
-import com.yelloco.fingodriver.enums.FingoCurrency;
+import com.yelloco.fingodriver.enums.Currency;
 import com.yelloco.fingodriver.enums.FingoOperation;
 import com.yelloco.fingodriver.models.fingo_operation.DisplayTextRequested;
 import com.yelloco.fingodriver.models.fingo_operation.IdentifyData;
@@ -35,7 +35,7 @@ public interface FingoContract
         void invoke(FingoOperation fingoOperation);
         void identify(int timeoutInMillis);
         void enroll(int timeoutInMillis);
-        void payment(int totalAmount, FingoCurrency fingoCurrency, int totalDiscount, PosData posData, int timeoutInMillis);
+        void payment(int totalAmount, Currency currency, int totalDiscount, PosData posData, int timeoutInMillis);
         void refund(int refundAmount, String transactionIdToRefund, String gatewayTransactionIdToRefund, TerminalData terminalData, int timeoutInMillis);
         void cancel();
         boolean isDeviceConnected();
