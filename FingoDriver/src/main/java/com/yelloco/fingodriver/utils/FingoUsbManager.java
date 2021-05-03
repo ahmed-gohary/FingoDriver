@@ -55,10 +55,17 @@ public class FingoUsbManager
             if(usbDevice != null){
                 if(FingoConstants.FINGO_DEVICE_NAME.equals(usbDevice.getProductName())){
                     if(! usbManager.hasPermission(usbDevice)){
-                        PendingIntent mPermissionIntent = PendingIntent.getBroadcast(context,
-                                0, new Intent(UsbReceiver.ACTION_USB_PERMISSION), 0);
-                        usbManager.requestPermission(usbDevice, mPermissionIntent);
+                        // if the device doesn't have permission then ask for it
+                        Log.d(TAG, "Requesting permission for device for the first time");
                     }
+                    else {
+                        // permission already granted start using the device
+                        Log.d(TAG, "Permission already granted for device, connecting...");
+                    }
+
+                    PendingIntent mPermissionIntent = PendingIntent.getBroadcast(context,
+                            0, new Intent(UsbReceiver.ACTION_USB_PERMISSION), 0);
+                    usbManager.requestPermission(usbDevice, mPermissionIntent);
                 }
             }
         }
