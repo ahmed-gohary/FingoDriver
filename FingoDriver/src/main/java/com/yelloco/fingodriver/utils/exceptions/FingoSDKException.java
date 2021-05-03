@@ -1,4 +1,4 @@
-package com.yelloco.fingodriver.exceptions;
+package com.yelloco.fingodriver.utils.exceptions;
 
 public class FingoSDKException extends Exception
 {
