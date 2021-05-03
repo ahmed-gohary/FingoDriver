@@ -48,4 +48,14 @@ public class EnrollmentRequest
     public void setVerificationTemplate(String verificationTemplate) {
         this.verificationTemplate = verificationTemplate;
     }
+
+    @Override
+    public String toString() {
+        return "EnrollmentRequest{" +
+                "hand=" + hand +
+                ", finger='" + finger + '\'' +
+                ", enrolmentTemplate='" + enrolmentTemplate.substring(0, 10) + '\'' +
+                ", verificationTemplate='" + verificationTemplate.substring(0, 10) + '\'' +
+                '}';
+    }
 }

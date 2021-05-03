@@ -73,7 +73,7 @@ public class PaymentRequest
     public String toString() {
         return "PaymentRequest{" +
                 "merchantId='" + merchantId + '\'' +
-                ", verificationTemplate='" + verificationTemplate + '\'' +
+                ", verificationTemplate='" + verificationTemplate.substring(0, 10) + '\'' +
                 ", totalAmount=" + totalAmount +
                 ", totalDiscount=" + totalDiscount +
                 ", currency='" + currency + '\'' +

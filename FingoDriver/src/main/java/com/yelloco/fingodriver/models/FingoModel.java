@@ -348,6 +348,8 @@ public class FingoModel implements FingoContract.Model
         IdentifyRequest identifyRequest = new IdentifyRequest();
         identifyRequest.setVerificationTemplate(verificationTemplate);
 
+        Log.d(TAG, "IdentifyRequest:\n" + identifyRequest.toString());
+
         identifyResponseCall = identifyApi.identify(fingoRequestHelper.getHeaders(), identifyRequest);
 
         identifyResponseCall.enqueue(new Callback<IdentifyResponse>() {
@@ -381,10 +383,12 @@ public class FingoModel implements FingoContract.Model
 
     private void enrollAtFingoCloud(String enrollmentTemplate, String verificationTemplate) {
         EnrollmentRequest enrollmentRequest = new EnrollmentRequest();
-        enrollmentRequest.setHand(0);
-        enrollmentRequest.setFinger("2");
+        enrollmentRequest.setHand(Integer.parseInt(FingoKeys.HAND_VALUE.getValue()));
+        enrollmentRequest.setFinger(FingoKeys.FINGER_VALUE.getValue());
         enrollmentRequest.setEnrolmentTemplate(enrollmentTemplate);
         enrollmentRequest.setVerificationTemplate(verificationTemplate);
+
+        Log.d(TAG, "EnrollmentRequest:\n" + enrollmentRequest.toString());
 
         enrollmentResponseCall = enrollmentApi.enrol(fingoRequestHelper.getHeaders(), enrollmentRequest);
 
@@ -427,7 +431,7 @@ public class FingoModel implements FingoContract.Model
         paymentRequest.setPosData(posData);
         paymentRequest.setCurrency(fingoCurrency.name());
 
-//        Log.d(TAG, "PaymentRequest:\n" + paymentRequest.toString());
+        Log.d(TAG, "PaymentRequest:\n" + paymentRequest.toString());
 
         paymentResponseCall = paymentApi.pay(fingoRequestHelper.getHeaders(), paymentRequest);
 
@@ -458,7 +462,7 @@ public class FingoModel implements FingoContract.Model
         refundRequest.setGatewayTransactionIdToRefund(gatewayTransactionIdToRefund);
         refundRequest.setTerminalData(terminalData);
 
-//        Log.d(TAG, "PaymentRequest:\n" + paymentRequest.toString());
+        Log.d(TAG, "RefundRequest:\n" + refundRequest.toString());
 
         refundResponseCall = refundApi.refund(fingoRequestHelper.getHeaders(), refundRequest);
 
@@ -544,7 +548,6 @@ public class FingoModel implements FingoContract.Model
         presenter.onPaymentData(new PaymentData(), fingoErrorResponse);
         SystemClock.sleep(FingoConstants.HALF_SECOND);
         presenter.onProcessingFinished(buildProcessingFinishedEvent(false, FingoErrorCode.H1_ONLINE_PAYMENT_ERROR));
-
     }
 
     private void handleRefundResponse(Response<RefundResponse> response){
