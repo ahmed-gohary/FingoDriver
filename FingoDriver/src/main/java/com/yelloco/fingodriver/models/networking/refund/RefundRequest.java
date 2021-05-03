@@ -75,7 +75,7 @@ public class RefundRequest
     public String toString() {
         return "RefundRequest{" +
                 "merchantId='" + merchantId + '\'' +
-                ", verificationTemplate='" + verificationTemplate + '\'' +
+                ", verificationTemplate='" + verificationTemplate.substring(0, 10) + '\'' +
                 ", transactionIdToRefund='" + transactionIdToRefund + '\'' +
                 ", gatewayTransactionIdToRefund='" + gatewayTransactionIdToRefund + '\'' +
                 ", refundAmount=" + refundAmount +

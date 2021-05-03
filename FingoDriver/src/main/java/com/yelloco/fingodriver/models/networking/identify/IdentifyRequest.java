@@ -18,4 +18,11 @@ public class IdentifyRequest
     public void setVerificationTemplate(String verificationTemplate) {
         this.verificationTemplate = verificationTemplate;
     }
+
+    @Override
+    public String toString() {
+        return "IdentifyRequest{" +
+                "verificationTemplate='" + verificationTemplate.substring(0, 10) + '\'' +
+                '}';
+    }
 }
