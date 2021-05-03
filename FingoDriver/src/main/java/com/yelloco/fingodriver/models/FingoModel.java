@@ -178,8 +178,8 @@ public class FingoModel implements FingoContract.Model
         }
         else{
             Log.e(TAG, "enroll: Second capture failed");
-            this.presenter.onDisplayTextRequested(this.buildDisplayTextRequested(firstCaptureSession.first.getDescriptionResId()));
-            this.presenter.onProcessingFinished(this.buildProcessingFinishedEvent(false, firstCaptureSession.first));
+            this.presenter.onDisplayTextRequested(this.buildDisplayTextRequested(secondCaptureSession.first.getDescriptionResId()));
+            this.presenter.onProcessingFinished(this.buildProcessingFinishedEvent(false, secondCaptureSession.first));
             return;
         }
 
@@ -197,8 +197,8 @@ public class FingoModel implements FingoContract.Model
         }
         else{
             Log.e(TAG, "enroll: Third capture failed");
-            this.presenter.onDisplayTextRequested(this.buildDisplayTextRequested(firstCaptureSession.first.getDescriptionResId()));
-            this.presenter.onProcessingFinished(this.buildProcessingFinishedEvent(false, firstCaptureSession.first));
+            this.presenter.onDisplayTextRequested(this.buildDisplayTextRequested(secondCaptureSession.first.getDescriptionResId()));
+            this.presenter.onProcessingFinished(this.buildProcessingFinishedEvent(false, secondCaptureSession.first));
             return;
         }
 
@@ -213,8 +213,8 @@ public class FingoModel implements FingoContract.Model
         }
         else{
             Log.w(TAG, "enroll: Enrollment template generation Failed");
-            this.presenter.onDisplayTextRequested(this.buildDisplayTextRequested(firstCaptureSession.first.getDescriptionResId()));
-            this.presenter.onProcessingFinished(this.buildProcessingFinishedEvent(false, firstCaptureSession.first));
+            this.presenter.onDisplayTextRequested(this.buildDisplayTextRequested(enrollmentTemplate.first.getDescriptionResId()));
+            this.presenter.onProcessingFinished(this.buildProcessingFinishedEvent(false, enrollmentTemplate.first));
             return;
         }
 
@@ -228,8 +228,8 @@ public class FingoModel implements FingoContract.Model
             SystemClock.sleep(FingoConstants.HALF_SECOND);
         }
         else{
-            this.presenter.onDisplayTextRequested(this.buildDisplayTextRequested(firstCaptureSession.first.getDescriptionResId()));
-            this.presenter.onProcessingFinished(this.buildProcessingFinishedEvent(false, firstCaptureSession.first));
+            this.presenter.onDisplayTextRequested(this.buildDisplayTextRequested(verificationCaptureSession.first.getDescriptionResId()));
+            this.presenter.onProcessingFinished(this.buildProcessingFinishedEvent(false, verificationCaptureSession.first));
             return;
         }
 
@@ -246,8 +246,8 @@ public class FingoModel implements FingoContract.Model
             }
         }
         else{
-            this.presenter.onDisplayTextRequested(this.buildDisplayTextRequested(firstCaptureSession.first.getDescriptionResId()));
-            this.presenter.onProcessingFinished(this.buildProcessingFinishedEvent(false, firstCaptureSession.first));
+            this.presenter.onDisplayTextRequested(this.buildDisplayTextRequested(verificationTemplate.first.getDescriptionResId()));
+            this.presenter.onProcessingFinished(this.buildProcessingFinishedEvent(false, verificationTemplate.first));
         }
     }
 
