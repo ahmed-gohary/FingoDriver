@@ -2,7 +2,6 @@ package com.yelloco.fingodriver.repository;
 
 import android.app.Activity;
 
-import com.yelloco.fingodriver.FingoSDK;
 import com.yelloco.fingodriver.callbacks.FingoContract;
 import com.yelloco.fingodriver.enums.FingoCurrency;
 import com.yelloco.fingodriver.enums.FingoOperation;
@@ -21,7 +20,6 @@ public class FingoPresenter implements FingoContract.Presenter
     private FingoContract.FingoListener fingoListener;
     private FingoContract.Model model;
     private Activity activity;
-    private boolean canProceed;
 
     public FingoPresenter(Activity activity, FingoContract.FingoListener fingoListener){
         this.activity = activity;
@@ -29,44 +27,28 @@ public class FingoPresenter implements FingoContract.Presenter
         this.model = new FingoModel(this, activity);
     }
 
-    public void identify(){
-        identify(true);
+    public void identify(int timeoutInMillis){
+        execute(FingoOperation.IDENTIFY, timeoutInMillis);
     }
 
-    public void identify(boolean forceOnline){
-        execute(FingoOperation.IDENTIFY, forceOnline);
+    public void enroll(int timeoutInMillis) {
+        execute(FingoOperation.ENROLLMENT, timeoutInMillis);
     }
 
-    public void enroll(){
-        enroll(true);
-    }
-
-    public void enroll(boolean forceOnline){
-        execute(FingoOperation.ENROLLMENT, forceOnline);
-    }
-
-    public void payment(int totalAmount, FingoCurrency fingoCurrency, int totalDiscount, PosData posData){
-        payment(totalAmount, fingoCurrency, totalDiscount, posData, true);
-    }
-
-    public void payment(int totalAmount, FingoCurrency fingoCurrency, int totalDiscount, PosData posData, boolean forceOnline){
+    public void payment(int totalAmount, FingoCurrency fingoCurrency, int totalDiscount, PosData posData, int timeoutInMillis){
         new Thread(() -> {
-            this.model.invoke(FingoOperation.PAYMENT, forceOnline);
+            this.model.invoke(FingoOperation.PAYMENT);
             if(! this.model.isOperationCancelled()){
-                this.model.payment(totalAmount, fingoCurrency, totalDiscount, posData, forceOnline);
+                this.model.payment(totalAmount, fingoCurrency, totalDiscount, posData, timeoutInMillis);
             }
         }).start();
     }
 
-    public void refund(int refundAmount, String transactionIdToRefund, String gatewayTransactionIdToRefund, TerminalData terminalData){
-        refund(refundAmount, transactionIdToRefund, gatewayTransactionIdToRefund, terminalData, true);
-    }
-
-    public void refund(int refundAmount, String transactionIdToRefund, String gatewayTransactionIdToRefund, TerminalData terminalData, boolean forceOnline){
+    public void refund(int refundAmount, String transactionIdToRefund, String gatewayTransactionIdToRefund, TerminalData terminalData, int timeoutInMillis){
         new Thread(() -> {
-            this.model.invoke(FingoOperation.REFUND, forceOnline);
+            this.model.invoke(FingoOperation.REFUND);
             if(! this.model.isOperationCancelled()){
-                this.model.refund(refundAmount, transactionIdToRefund, gatewayTransactionIdToRefund, terminalData, forceOnline);
+                this.model.refund(refundAmount, transactionIdToRefund, gatewayTransactionIdToRefund, terminalData, timeoutInMillis);
             }
         }).start();
     }
@@ -88,17 +70,17 @@ public class FingoPresenter implements FingoContract.Presenter
         return this.model.isOperationCancelled();
     }
 
-    private void execute(FingoOperation fingoOperation, boolean forceOnline){
+    private void execute(FingoOperation fingoOperation, int timeoutInMillis){
         new Thread(() -> {
-            this.model.invoke(fingoOperation, forceOnline);
+            this.model.invoke(fingoOperation);
             if(! this.model.isOperationCancelled()){
                 switch (fingoOperation){
                     case IDENTIFY:{
-                        this.model.identify(forceOnline);
+                        this.model.identify(timeoutInMillis);
                         break;
                     }
                     case ENROLLMENT:{
-                        this.model.enroll(forceOnline);
+                        this.model.enroll(timeoutInMillis);
                         break;
                     }
                 }
