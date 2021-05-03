@@ -8,11 +8,9 @@ import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
 import android.util.Log;
 
-import com.yelloco.fingodriver.exceptions.FingoSDKException;
 import com.yelloco.fingodriver.models.FingoDevice;
 import com.yelloco.fingodriver.models.events.DeviceAttachedEvent;
 import com.yelloco.fingodriver.models.events.DeviceDetachedEvent;
-import com.yelloco.fingodriver.enums.FingoErrorCode;
 
 import org.greenrobot.eventbus.EventBus;
 
