@@ -26,7 +26,8 @@ public class FingoRequestHelper
         this.fillPartnerId();
         this.fillMerchantId();
         this.fillCloudUrl();
-
+        this.fillDriverVersion();
+        this.fillBuildNumberVersion();
 
         Log.d("FingoRequestHelper", this.toString());
     }
@@ -66,6 +67,14 @@ public class FingoRequestHelper
         this.fingoCloudBaseUrl = Storage.getInstance().getString(StorageKey.FINGO_CLOUD_URL.name());
     }
 
+    private void fillDriverVersion(){
+        this.headers.put(Key.CLOUD_DRIVER_VERSION.getValue(), "2.0");
+    }
+
+    private void fillBuildNumberVersion(){
+        this.headers.put(Key.BUILD_NUMBER_ASSEMBLY_VERSION.getValue(), "1234ABCD6789ABEF");
+    }
+
     public Map<String, String> getHeaders() {
         return this.headers;
     }
@@ -83,6 +92,8 @@ public class FingoRequestHelper
         LOCATION("x-fingopay-location"),
         TERMINAL_ID("x-fingopay-terminalid"),
         PARTNER_ID("x-fingopay-partnerid"),
+        CLOUD_DRIVER_VERSION("x-fingo-driver-version"),
+        BUILD_NUMBER_ASSEMBLY_VERSION("x-fingo-driver-assembly"),
         ;
 
         private final String value;
