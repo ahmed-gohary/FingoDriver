@@ -26,7 +26,7 @@ public class FingoPayDriver
 {
     // Constants
     private static final String TAG = FingoPayDriver.class.getSimpleName();
-    private static final int DEFAULT_TIMEOUT = 10000;
+    private static final int DEFAULT_TIMEOUT = FingoConstants.TWENTY_SECS;
     private final int CONSECUTIVE_SCAN_RESTING_INTERVAL;
     private final Object lock = new Object();
     private static FingoPayDriver fingoPayDriver = new FingoPayDriver();
@@ -119,7 +119,14 @@ public class FingoPayDriver
         return this.capture(DEFAULT_TIMEOUT, fingoCaptureCallback);
     }
 
+    public Pair<FingoErrorCode, byte[]> capture(int timeout) {
+        return this.capture(timeout, null);
+    }
+
     public Pair<FingoErrorCode, byte[]> capture(int timeoutInMillis, FingoCaptureCallback fingoCaptureCallback){
+        if(timeoutInMillis < FingoConstants.TEN_SECS){
+            timeoutInMillis = DEFAULT_TIMEOUT;
+        }
         if(scannerResting){
             try {
                 // this will hold the calling thread until the scanner is ready

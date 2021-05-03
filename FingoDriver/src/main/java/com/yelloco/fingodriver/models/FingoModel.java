@@ -92,7 +92,9 @@ public class FingoModel implements FingoContract.Model
         refundApi = retrofit.create(RefundApi.class);
     }
 
-    public void invoke(FingoOperation fingoOperation, boolean forceOnline){
+    public void invoke(FingoOperation fingoOperation){
+        Log.i(TAG, "Starting FingoOperation: " + fingoOperation.name());
+
         operationCancelled = false;
         this.presenter.onProcessingStarted();
 
@@ -106,13 +108,12 @@ public class FingoModel implements FingoContract.Model
 
     /**
      *  captures a vein biometric template by invoking 1 finger scans and then creates a verification template
-     * @param forceOnline
      */
     @Override
-    public void identify(boolean forceOnline){
+    public void identify(int timeoutInMillis){
         Log.d(TAG, "Starting identification process");
 
-        Pair<FingoErrorCode, byte[]> captureSession = this.fingoPayDriver.capture();
+        Pair<FingoErrorCode, byte[]> captureSession = this.fingoPayDriver.capture(timeoutInMillis);
 
         if(captureSession.first.equals(FingoErrorCode.H1_OK)){
             Log.i(TAG, "identify: Identification OK");
@@ -128,18 +129,13 @@ public class FingoModel implements FingoContract.Model
         Pair<FingoErrorCode, String> verificationTemplate = this.fingoPayDriver.createVerificationTemplate(captureSession.second);
         if(verificationTemplate.first.equals(FingoErrorCode.H1_OK)){
             Log.i(TAG, "VerificationTemplate generation completed:\n" + verificationTemplate.second);
-            if(forceOnline && context.checkSelfPermission(Manifest.permission.INTERNET) == PackageManager.PERMISSION_GRANTED){
+            if(context.checkSelfPermission(Manifest.permission.INTERNET) == PackageManager.PERMISSION_GRANTED){
                 validateVeinIdAtFingoCloud(verificationTemplate.second);
             }
-            else if(forceOnline){
+            else{
                 this.presenter.onDisplayTextRequested(buildDisplayTextRequested(FingoErrorCode.H1_INTERNET_PERMISSION_NOT_GRANTED.getDescriptionResId()));
                 SystemClock.sleep(FingoConstants.HALF_SECOND);
-                this.presenter.onIdentifyData(buildOfflineResponse(verificationTemplate.second, null));
-                this.presenter.onProcessingFinished(buildProcessingFinishedEvent(true, FingoErrorCode.H1_OK));
-            }
-            else{
-                this.presenter.onIdentifyData(buildOfflineResponse(verificationTemplate.second, null));
-                this.presenter.onProcessingFinished(buildProcessingFinishedEvent(true, FingoErrorCode.H1_OK));
+                this.presenter.onProcessingFinished(buildProcessingFinishedEvent(false, FingoErrorCode.H1_ONLINE_IDENTIFICATION_ERROR));
             }
         }
         else {
@@ -150,13 +146,12 @@ public class FingoModel implements FingoContract.Model
 
     /**
      * captures a vein biometric template by invoking 3 finger scans and then creates an enrollmentTemplate of the 3 combined scans.
-     * @param forceOnline
      */
     @Override
-    public void enroll(boolean forceOnline){
+    public void enroll(int timeoutInMillis){
         Log.d(TAG, "Starting enrollment process");
 
-        Pair<FingoErrorCode, byte[]> firstCaptureSession = FingoPayDriver.getInstance().capture(() -> {
+        Pair<FingoErrorCode, byte[]> firstCaptureSession = this.fingoPayDriver.capture(timeoutInMillis, () -> {
             this.presenter.onDisplayTextRequested(this.buildDisplayTextRequested(R.string.please_insert_finger));
         });
 
@@ -175,7 +170,7 @@ public class FingoModel implements FingoContract.Model
         }
 
         // scan second time
-        Pair<FingoErrorCode, byte[]> secondCaptureSession = FingoPayDriver.getInstance().capture(() -> {
+        Pair<FingoErrorCode, byte[]> secondCaptureSession = this.fingoPayDriver.capture(timeoutInMillis, () -> {
             this.presenter.onDisplayTextRequested(this.buildDisplayTextRequested(R.string.please_insert_finger));
         });
 
@@ -194,7 +189,7 @@ public class FingoModel implements FingoContract.Model
         }
 
         // scan third time
-        Pair<FingoErrorCode, byte[]> thirdCaptureSession = FingoPayDriver.getInstance().capture(() -> {
+        Pair<FingoErrorCode, byte[]> thirdCaptureSession = this.fingoPayDriver.capture(timeoutInMillis, () -> {
             this.presenter.onDisplayTextRequested(this.buildDisplayTextRequested(R.string.please_insert_finger));
         });
 
@@ -214,7 +209,7 @@ public class FingoModel implements FingoContract.Model
 
         byte[][] enrollmentSession = {firstCaptureSession.second, secondCaptureSession.second, thirdCaptureSession.second};
 
-        Pair<FingoErrorCode, String> enrollmentTemplate = FingoPayDriver.getInstance().createEnrolmentTemplate(enrollmentSession);
+        Pair<FingoErrorCode, String> enrollmentTemplate = this.fingoPayDriver.createEnrolmentTemplate(enrollmentSession);
 
         if(enrollmentTemplate.first.equals(FingoErrorCode.H1_OK)){
             Log.d(TAG, "enroll: Enrollment Template generated OK");
@@ -228,7 +223,7 @@ public class FingoModel implements FingoContract.Model
             return;
         }
 
-        Pair<FingoErrorCode, byte[]> verificationCaptureSession = FingoPayDriver.getInstance().capture(() -> {
+        Pair<FingoErrorCode, byte[]> verificationCaptureSession = this.fingoPayDriver.capture(timeoutInMillis, () -> {
             this.presenter.onDisplayTextRequested(this.buildDisplayTextRequested(R.string.please_insert_finger));
         });
 
@@ -243,40 +238,33 @@ public class FingoModel implements FingoContract.Model
             return;
         }
 
-        Pair<FingoErrorCode, String> verificationTemplate = FingoPayDriver.getInstance().createVerificationTemplate(verificationCaptureSession.second);
+        Pair<FingoErrorCode, String> verificationTemplate = this.fingoPayDriver.createVerificationTemplate(verificationCaptureSession.second);
 
         if(verificationTemplate.first.equals(FingoErrorCode.H1_OK)){
-            if(forceOnline && context.checkSelfPermission(Manifest.permission.INTERNET) == PackageManager.PERMISSION_GRANTED){
+            if(context.checkSelfPermission(Manifest.permission.INTERNET) == PackageManager.PERMISSION_GRANTED){
                 enrollAtFingoCloud(enrollmentTemplate.second, verificationTemplate.second);
             }
-            else if(forceOnline){
+            else{
                 this.presenter.onDisplayTextRequested(buildDisplayTextRequested(FingoErrorCode.H1_INTERNET_PERMISSION_NOT_GRANTED.getDescriptionResId()));
                 SystemClock.sleep(FingoConstants.HALF_SECOND);
-                this.presenter.onIdentifyData(buildOfflineResponse(verificationTemplate.second, enrollmentTemplate.second));
-                this.presenter.onProcessingFinished(buildProcessingFinishedEvent(true, FingoErrorCode.H1_OK));
-            }
-            else{
-                this.presenter.onIdentifyData(buildOfflineResponse(verificationTemplate.second, enrollmentTemplate.second));
-                this.presenter.onProcessingFinished(buildProcessingFinishedEvent(true, FingoErrorCode.H1_OK));
+                this.presenter.onProcessingFinished(buildProcessingFinishedEvent(false, FingoErrorCode.H1_ONLINE_ENROLLMENT_ERROR));
             }
         }
         else{
             this.presenter.onDisplayTextRequested(this.buildDisplayTextRequested(firstCaptureSession.first.getDescriptionResId()));
             this.presenter.onProcessingFinished(this.buildProcessingFinishedEvent(false, firstCaptureSession.first));
-            return;
         }
     }
 
     /**
      *  captures a vein biometric template by invoking 1 finger scans and then creates a verification template
      *  to be used in the payment operation
-     * @param forceOnline
      */
     @Override
-    public void payment(int totalAmount, FingoCurrency fingoCurrency, int totalDiscount, PosData posData, boolean forceOnline){
+    public void payment(int totalAmount, FingoCurrency fingoCurrency, int totalDiscount, PosData posData, int timeoutInMillis){
         Log.d(TAG, "Starting payment process");
 
-        Pair<FingoErrorCode, byte[]> captureSession = this.fingoPayDriver.capture();
+        Pair<FingoErrorCode, byte[]> captureSession = this.fingoPayDriver.capture(timeoutInMillis);
 
         if(captureSession.first.equals(FingoErrorCode.H1_OK)){
             Log.i(TAG, "identify: Identification OK");
@@ -292,17 +280,12 @@ public class FingoModel implements FingoContract.Model
         Pair<FingoErrorCode, String> verificationTemplate = this.fingoPayDriver.createVerificationTemplate(captureSession.second);
         if(verificationTemplate.first.equals(FingoErrorCode.H1_OK)){
             Log.i(TAG, "VerificationTemplate generation completed:\n" + verificationTemplate.second);
-            if(forceOnline && context.checkSelfPermission(Manifest.permission.INTERNET) == PackageManager.PERMISSION_GRANTED){
+            if(context.checkSelfPermission(Manifest.permission.INTERNET) == PackageManager.PERMISSION_GRANTED){
                 payWithVeinIdAtFingoCloud(totalAmount, fingoCurrency, totalDiscount, posData, verificationTemplate.second);
             }
-            else if(forceOnline){
+            else{
                 this.presenter.onDisplayTextRequested(buildDisplayTextRequested(FingoErrorCode.H1_INTERNET_PERMISSION_NOT_GRANTED.getDescriptionResId()));
                 SystemClock.sleep(FingoConstants.HALF_SECOND);
-                this.presenter.onIdentifyData(buildOfflineResponse(verificationTemplate.second, null));
-                this.presenter.onProcessingFinished(buildProcessingFinishedEvent(false, FingoErrorCode.H1_ONLINE_PAYMENT_ERROR));
-            }
-            else {
-                this.presenter.onIdentifyData(buildOfflineResponse(verificationTemplate.second, null));
                 this.presenter.onProcessingFinished(buildProcessingFinishedEvent(false, FingoErrorCode.H1_ONLINE_PAYMENT_ERROR));
             }
         }
@@ -315,13 +298,12 @@ public class FingoModel implements FingoContract.Model
     /**
      *  captures a vein biometric template by invoking 1 finger scans and then creates a verification template
      *  to be used in the refund operation
-     * @param forceOnline
      */
     @Override
-    public void refund(int refundAmount, String transactionIdToRefund, String gatewayTransactionIdToRefund, TerminalData terminalData, boolean forceOnline){
+    public void refund(int refundAmount, String transactionIdToRefund, String gatewayTransactionIdToRefund, TerminalData terminalData, int timeoutInMillis){
         Log.d(TAG, "Starting refund process");
 
-        Pair<FingoErrorCode, byte[]> captureSession = this.fingoPayDriver.capture();
+        Pair<FingoErrorCode, byte[]> captureSession = this.fingoPayDriver.capture(timeoutInMillis);
 
         if(captureSession.first.equals(FingoErrorCode.H1_OK)){
             Log.i(TAG, "identify: Identification OK");
@@ -337,17 +319,12 @@ public class FingoModel implements FingoContract.Model
         Pair<FingoErrorCode, String> verificationTemplate = this.fingoPayDriver.createVerificationTemplate(captureSession.second);
         if(verificationTemplate.first.equals(FingoErrorCode.H1_OK)){
             Log.i(TAG, "VerificationTemplate generation completed:\n" + verificationTemplate.second);
-            if(forceOnline && context.checkSelfPermission(Manifest.permission.INTERNET) == PackageManager.PERMISSION_GRANTED){
+            if(context.checkSelfPermission(Manifest.permission.INTERNET) == PackageManager.PERMISSION_GRANTED){
                 refundWithVeinIdAtFingoCloud(refundAmount, transactionIdToRefund, gatewayTransactionIdToRefund, terminalData, verificationTemplate.second);
             }
-            else if(forceOnline){
+            else{
                 this.presenter.onDisplayTextRequested(buildDisplayTextRequested(FingoErrorCode.H1_INTERNET_PERMISSION_NOT_GRANTED.getDescriptionResId()));
                 SystemClock.sleep(FingoConstants.HALF_SECOND);
-                this.presenter.onIdentifyData(buildOfflineResponse(verificationTemplate.second, null));
-                this.presenter.onProcessingFinished(buildProcessingFinishedEvent(false, FingoErrorCode.H1_ONLINE_REFUND_ERROR));
-            }
-            else {
-                this.presenter.onIdentifyData(buildOfflineResponse(verificationTemplate.second, null));
                 this.presenter.onProcessingFinished(buildProcessingFinishedEvent(false, FingoErrorCode.H1_ONLINE_REFUND_ERROR));
             }
         }

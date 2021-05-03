@@ -11,6 +11,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.yelloco.fingodriver.FingoConstants;
 import com.yelloco.fingodriver.FingoPayDriver;
 import com.yelloco.fingodriver.FingoSDK;
 import com.yelloco.fingodriver.callbacks.FingoContract;
@@ -28,6 +29,8 @@ import com.yelloco.fingodriver.utils.FingoParams;
 public class MainActivity extends AppCompatActivity implements FingoContract.FingoListener
 {
     private static final String TAG = MainActivity.class.getSimpleName();
+
+    private static final int TIMEOUT = 15000;
 
     private LinearLayout loadingLayout;
     private LinearLayout buttonsLayout;
@@ -74,14 +77,14 @@ public class MainActivity extends AppCompatActivity implements FingoContract.Fin
         identify.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                fingoPresenter.identify(true);
+                fingoPresenter.identify(TIMEOUT);
             }
         });
 
         enroll.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                fingoPresenter.enroll(true);
+                fingoPresenter.enroll(TIMEOUT);
             }
         });
 
@@ -89,7 +92,7 @@ public class MainActivity extends AppCompatActivity implements FingoContract.Fin
             @Override
             public void onClick(View view) {
                 PosData posData = new PosData("2", "Cairo");
-                fingoPresenter.payment(200, FingoCurrency.GBP, 0,posData, true);
+                fingoPresenter.payment(200, FingoCurrency.GBP, 0,posData, TIMEOUT);
             }
         });
 
@@ -98,7 +101,7 @@ public class MainActivity extends AppCompatActivity implements FingoContract.Fin
             public void onClick(View view) {
                 TerminalData terminalData = new TerminalData();
                 terminalData.setLocation("Cairo");
-                fingoPresenter.refund(100, "8c04ad1b-e1e8-4752-b50c-e3c9dc70ad11", "96577222", terminalData, true);
+                fingoPresenter.refund(100, "8c04ad1b-e1e8-4752-b50c-e3c9dc70ad11", "96577222", terminalData, TIMEOUT);
             }
         });
     }

@@ -12,7 +12,7 @@ public enum FingoErrorCode
     H1_OK(0, R.string.fingo_error_successful),
     H1_CANCELLED(1, R.string.fingo_error_cancelled),
     H1_DEVICE_NOT_FOUND(-1, R.string.fingo_error_device_not_found),
-    H1_H1_TIMEOUT(-3, R.string.fingo_error_timeout),
+    H1_TIMEOUT(-3, R.string.fingo_error_timeout),
     H1_CAPTURE_FAIL(-4, R.string.fingo_error_capture_failed),
     H1_NOT_CAPTURING(-6, R.string.fingo_error_not_capturing),
     H1_UNEXPECTED(-10, R.string.fingo_error_unexpected),

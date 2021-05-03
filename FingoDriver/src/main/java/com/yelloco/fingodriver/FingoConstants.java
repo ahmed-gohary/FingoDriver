@@ -6,6 +6,8 @@ public class FingoConstants
     public static final int HALF_SECOND = 500;
     public static final int ONE_SECOND = 1000;
     public static final int THREE_SECONDS = 3000;
+    public static final int TEN_SECS = 10000;
+    public static final int TWENTY_SECS = 20000;
 
     // Strings
     public static final String FINGO_DEVICE_NAME = "Finger Vein Module";
