@@ -9,6 +9,5 @@ public class FingoConstants
 
     // Strings
     public static final String FINGO_DEVICE_NAME = "Finger Vein Module";
-    public static final String TEMPLATE_KEY_SEED = "FvCoreSample1";
     public static final String KAN_UNIQUE_ID = "09032021KANProject";
 }

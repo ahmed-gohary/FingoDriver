@@ -16,6 +16,7 @@ import com.yelloco.fingodriver.callbacks.FingoCaptureCallback;
 import com.yelloco.fingodriver.models.events.DeviceDetachedEvent;
 import com.yelloco.fingodriver.enums.FingoErrorCode;
 import com.yelloco.fingodriver.utils.Storage;
+import com.yelloco.fingodriver.utils.UsbReceiver;
 
 import org.greenrobot.eventbus.Subscribe;
 
@@ -78,7 +79,8 @@ public class FingoPayDriver
     }
 
     public FingoErrorCode openDevice() {
-        FingoErrorCode templateKeySeedErrorCode = this.setCryptoTemplateKey(FingoConstants.TEMPLATE_KEY_SEED);;
+        String templateKeySeed = Storage.getInstance().getString(StorageKey.TEMPLATE_KEY.name());
+        FingoErrorCode templateKeySeedErrorCode = this.setCryptoTemplateKey(templateKeySeed);;
         if(! FingoErrorCode.H1_OK.equals(templateKeySeedErrorCode)){
             Log.w(TAG, "Fingo Template Key Not set");
             return templateKeySeedErrorCode;

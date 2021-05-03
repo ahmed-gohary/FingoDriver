@@ -1,4 +1,4 @@
-package com.yelloco.fingodriver;
+package com.yelloco.fingodriver.utils;
 
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
@@ -8,15 +8,14 @@ import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
 import android.util.Log;
 
-import com.yelloco.fingodriver.exceptions.FingoSDKException;
+import com.yelloco.fingodriver.FingoPayDriver;
 import com.yelloco.fingodriver.models.FingoDevice;
 import com.yelloco.fingodriver.models.events.DeviceAttachedEvent;
 import com.yelloco.fingodriver.models.events.DeviceDetachedEvent;
-import com.yelloco.fingodriver.enums.FingoErrorCode;
 
 import org.greenrobot.eventbus.EventBus;
 
-class UsbReceiver extends BroadcastReceiver
+public class UsbReceiver extends BroadcastReceiver
 {
     // Constants
     private static final String TAG = UsbReceiver.class.getSimpleName();

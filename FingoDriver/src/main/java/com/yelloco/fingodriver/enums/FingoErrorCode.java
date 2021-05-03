@@ -24,12 +24,22 @@ public enum FingoErrorCode
     H1_DEVICE_ALREADY_OPENED(-16, R.string.fingo_error_device_already_opened),
     H1_TEMPLATE_SEED_ERROR(-17, R.string.fingo_error_template_seed_error),
     H1_INVALID_ENROLLMENT_DATA(-18, R.string.fingo_error_invalid_enrollment_data_error),
+    H1_INVALID_CLOUD_URL(-19, R.string.fingo_error_invalid_cloud_url),
+    H1_INVALID_PARTNER_ID(-20, R.string.fingo_error_invalid_partner_id),
+    H1_INVALID_MERCHANT_ID(-21, R.string.fingo_error_invalid_merchant_id),
+    H1_INVALID_TERMINAL_ID(-22, R.string.fingo_error_invalid_terminal_id),
+    H1_INVALID_API_KEY(-23, R.string.fingo_error_invalid_api_key),
+    H1_INVALID_TEMPLATE_KEY(-24, R.string.fingo_error_invalid_template_key),
+    H1_DEVICE_DISCONNECTED_DURING_SCANNING(33, R.string.fingo_error_device_disconnected_during_scanning),
     H1_UNKNOWN_ERROR(Integer.MIN_VALUE, R.string.fingo_error_unknown_error),
     H1_INTERNET_PERMISSION_NOT_GRANTED(Integer.MIN_VALUE + 1, R.string.fingo_error_network_permission_error),
     H1_ONLINE_IDENTIFICATION_ERROR(Integer.MIN_VALUE + 2, R.string.fingo_error_online_identification_error),
     H1_ONLINE_ENROLLMENT_ERROR(Integer.MIN_VALUE + 3, R.string.fingo_error_online_enrollment_error),
     H1_ONLINE_PAYMENT_ERROR(Integer.MIN_VALUE + 4, R.string.fingo_error_online_payment_error),
-    H1_ONLINE_REFUND_ERROR(Integer.MIN_VALUE + 5, R.string.fingo_error_online_refund_error);
+    H1_ONLINE_REFUND_ERROR(Integer.MIN_VALUE + 5, R.string.fingo_error_online_refund_error),
+    H1_SDK_INIT_FAILED_BLOCKED(Integer.MIN_VALUE + 6, R.string.fingo_error_sdk_init_failed_can_not_proceed),
+
+    ;
 
     private final int errorCode;
     private final int descriptionResId;
@@ -48,7 +58,7 @@ public enum FingoErrorCode
     }
 
     public static FingoErrorCode parseErrorCode(int errorCode){
-        for (FingoErrorCode fingoErrorCode :FingoErrorCode.values()) {
+        for (FingoErrorCode fingoErrorCode : FingoErrorCode.values()) {
             if(fingoErrorCode.getErrorCode() == errorCode)
                 return fingoErrorCode;
         }

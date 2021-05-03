@@ -4,14 +4,16 @@ import android.annotation.SuppressLint;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
 import android.util.Log;
 
 import com.yelloco.fingodriver.enums.FingoErrorCode;
 import com.yelloco.fingodriver.enums.StorageKey;
+import com.yelloco.fingodriver.utils.FingoParams;
+import com.yelloco.fingodriver.utils.FingoUsbManager;
 import com.yelloco.fingodriver.utils.Storage;
+import com.yelloco.fingodriver.utils.UsbReceiver;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -24,74 +26,47 @@ public class FingoSDK
 
     // Memebers
     protected static boolean sdkInitialized;
-    private static UsbReceiver usbReceiver;
     @SuppressLint("StaticFieldLeak")
     private static Context context;
+    private static FingoUsbManager fingoUsbManager;
 
     private FingoSDK(){
     }
 
-    public static FingoErrorCode initialize(Context context){
+    public static FingoErrorCode initialize(Context context, FingoParams fingoParams){
         if(sdkInitialized){
             Log.w(TAG, "FingoSDK Already INITIALIZED");
             return FingoErrorCode.H1_DRIVER_INITIALIZED;
         }
-
-        FingoSDK.context = context;
-
-        Storage.getInstance().initialize(context);
-
-        UsbManager usbManager = (UsbManager) context.getSystemService(Context.USB_SERVICE);
-
-        if(usbManager == null){
-            Log.e(TAG, "Usb Is Not Supported");
-            return FingoErrorCode.H1_USB_NOT_SUPPORTED;
+        if(context == null){
+            Log.e(TAG, "FingoSDK received NULL context");
+            return FingoErrorCode.H1_UNEXPECTED;
         }
 
-        usbReceiver = new UsbReceiver(usbManager, context);
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(UsbReceiver.ACTION_USB_DEVICE_ATTACHED);
-        intentFilter.addAction(UsbReceiver.ACTION_USB_DEVICE_DETACHED);
-        intentFilter.addAction(UsbReceiver.ACTION_USB_PERMISSION);
+        FingoSDK.context = context;
+        Storage.getInstance().initialize(context);
 
-        context.registerReceiver(usbReceiver, intentFilter);
+        FingoErrorCode fingoParamsErrorCode = fingoParams.validate();
+
+        if(fingoParamsErrorCode != FingoErrorCode.H1_OK){
+            return fingoParamsErrorCode;
+        }
+
+        fingoUsbManager = new FingoUsbManager(context);
+        FingoErrorCode usbInitStatus = fingoUsbManager.initialize();
+
+        if(usbInitStatus != FingoErrorCode.H1_OK){
+            return usbInitStatus;
+        }
 
         sdkInitialized = true;
         Log.d(TAG, "Fingo SDK Initialized");
 
         EventBus.getDefault().register(FingoPayDriver.getInstance());
 
-        checkAttachedDevices();
+        fingoUsbManager.checkAttachedDevices();
 
         return FingoErrorCode.H1_OK;
-    }
-
-    protected static void checkAttachedDevices() {
-        UsbManager usbManager = UsbReceiver.getUsbManager();
-
-        // Get the list of attached devices
-        HashMap<String, UsbDevice> devices = usbManager.getDeviceList();
-
-        // Iterate over all devices
-        for (String deviceName : devices.keySet()) {
-            UsbDevice usbDevice = devices.get(deviceName);
-            if(usbDevice != null){
-                if(FingoConstants.FINGO_DEVICE_NAME.equals(usbDevice.getProductName())){
-                    if(! usbManager.hasPermission(usbDevice)){
-                        PendingIntent mPermissionIntent = PendingIntent.getBroadcast(context,
-                                0, new Intent(UsbReceiver.ACTION_USB_PERMISSION), 0);
-                        usbManager.requestPermission(usbDevice, mPermissionIntent);
-                    }
-                }
-            }
-        }
-    }
-
-    public static void setConsecutiveScanInterval(int delayInMillis){
-        if(delayInMillis < FingoConstants.ONE_SECOND){
-            delayInMillis = FingoConstants.ONE_SECOND;
-        }
-        Storage.getInstance().storeInt(StorageKey.CONSECUTIVE_SCAN_INTERVAL.name(), delayInMillis);
     }
 
     public static String about(){
@@ -115,10 +90,7 @@ public class FingoSDK
         sdkInitialized = false;
         EventBus.getDefault().unregister(FingoPayDriver.getInstance());
 
-        if(context != null) {
-            context.unregisterReceiver(usbReceiver);
-            Log.d(TAG, "Fingo Receiver Unregistered");
-        }
+        fingoUsbManager.destroy();
     }
 
     public static boolean isSdkInitialized() {
