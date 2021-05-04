@@ -103,32 +103,20 @@ public class FingoParams
             Log.e(TAG, "INVALID CLOUD URL: " + this.cloudUrl);
             return FingoErrorCode.H1_INVALID_CLOUD_URL;
         }
-        else{
-            Storage.getInstance().storeString(StorageKey.FINGO_CLOUD_URL.name(), this.cloudUrl);
-        }
 
         if(this.partnerId == null || this.partnerId.length() == 0){
             Log.e(TAG, "INVALID PARTNER ID: " + this.partnerId);
             return FingoErrorCode.H1_INVALID_PARTNER_ID;
-        }
-        else{
-            Storage.getInstance().storeString(StorageKey.PARTNER_ID.name(), this.partnerId);
         }
 
         if(this.merchantId == null || this.merchantId.length() == 0){
             Log.e(TAG, "INVALID MERCHANT ID: " + this.merchantId);
             return FingoErrorCode.H1_INVALID_MERCHANT_ID;
         }
-        else{
-            Storage.getInstance().storeString(StorageKey.MERCHANT_ID.name(), this.merchantId);
-        }
 
         if(this.terminalId == null || this.terminalId.length() == 0){
             Log.e(TAG, "INVALID TERMINAL ID: " + this.terminalId);
             return FingoErrorCode.H1_INVALID_TERMINAL_ID;
-        }
-        else{
-            Storage.getInstance().storeString(StorageKey.TERMINAL_ID.name(), this.terminalId);
         }
 
         if(this.apiKey == null || this.apiKey.length() == 0){
@@ -139,25 +127,39 @@ public class FingoParams
             Log.e(TAG, "INVALID API KEY CAN'T START WITH \"x-apikey\": " + this.apiKey);
             return FingoErrorCode.H1_INVALID_API_KEY;
         }
-        else{
-            Storage.getInstance().storeString(StorageKey.API_KEY.name(), this.apiKey);
-        }
 
         if(this.templateKeySeed == null || this.templateKeySeed.length() == 0){
             Log.e(TAG, "INVALID TEMPLATE KEY: " + this.templateKeySeed);
             return FingoErrorCode.H1_INVALID_TEMPLATE_KEY;
-        }
-        else{
-            Storage.getInstance().storeString(StorageKey.TEMPLATE_KEY.name(), this.templateKeySeed);
         }
 
         if(consecutiveScanInterval < FingoConstants.ONE_SECOND){
             consecutiveScanInterval = FingoConstants.ONE_SECOND;
         }
 
+        Storage.getInstance().storeString(StorageKey.FINGO_CLOUD_URL.name(), this.cloudUrl);
+        Storage.getInstance().storeString(StorageKey.PARTNER_ID.name(), this.partnerId);
+        Storage.getInstance().storeString(StorageKey.MERCHANT_ID.name(), this.merchantId);
+        Storage.getInstance().storeString(StorageKey.TERMINAL_ID.name(), this.terminalId);
+        Storage.getInstance().storeString(StorageKey.API_KEY.name(), this.apiKey);
+        Storage.getInstance().storeString(StorageKey.TEMPLATE_KEY.name(), this.templateKeySeed);
         Storage.getInstance().storeInt(StorageKey.CONSECUTIVE_SCAN_INTERVAL.name(), consecutiveScanInterval);
         Storage.getInstance().storeString(StorageKey.LOCATION.name(), (location == null) ? "" : location);
 
         return FingoErrorCode.H1_OK;
+    }
+
+    public static FingoParams getStoredParams(){
+        FingoParams fingoParams = new FingoParams();
+        fingoParams.setCloudUrl(Storage.getInstance().getString(StorageKey.FINGO_CLOUD_URL.name()));
+        fingoParams.setPartnerId(Storage.getInstance().getString(StorageKey.PARTNER_ID.name()));
+        fingoParams.setMerchantId(Storage.getInstance().getString(StorageKey.MERCHANT_ID.name()));
+        fingoParams.setTerminalId(Storage.getInstance().getString(StorageKey.TERMINAL_ID.name()));
+        fingoParams.setApiKey(Storage.getInstance().getString(StorageKey.API_KEY.name()));
+        fingoParams.setTemplateKeySeed(Storage.getInstance().getString(StorageKey.TEMPLATE_KEY.name()));
+        fingoParams.setConsecutiveScanInterval(Storage.getInstance().getInt(StorageKey.CONSECUTIVE_SCAN_INTERVAL.name(), FingoConstants.ONE_SECOND));
+        fingoParams.setLocation(Storage.getInstance().getString(StorageKey.LOCATION.name()));
+
+        return fingoParams;
     }
 }

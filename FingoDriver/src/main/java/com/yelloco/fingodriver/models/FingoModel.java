@@ -40,9 +40,13 @@ import com.yelloco.fingodriver.models.networking.refund.RefundRequest;
 import com.yelloco.fingodriver.models.networking.refund.RefundResponse;
 import com.yelloco.fingodriver.models.networking.refund.TerminalData;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.lang.reflect.Type;
 import java.util.List;
 
+import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -76,9 +80,26 @@ public class FingoModel implements FingoContract.Model
         this.canProceed = FingoSDK.isSdkInitialized();
         this.fingoPayDriver = FingoPayDriver.getInstance();
         this.fingoRequestHelper = new FingoRequestHelper();
+
+        HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
+            @Override
+            public void log(@NotNull String data) {
+                if(FingoSDK.fingoRequestLogger != null){
+                    FingoSDK.fingoRequestLogger.onLogDataAvailable(data);
+                }
+                else{
+                    Log.d(TAG, data);
+                }
+            }
+        });
+        httpLoggingInterceptor.level(HttpLoggingInterceptor.Level.HEADERS);
+        httpLoggingInterceptor.level(HttpLoggingInterceptor.Level.BODY);
+        OkHttpClient okHttpClient = new OkHttpClient.Builder().addInterceptor(httpLoggingInterceptor).build();
+
         this.retrofit = new Retrofit.Builder()
                 .baseUrl(fingoRequestHelper.getFingoCloudBaseUrl())
                 .addConverterFactory(GsonConverterFactory.create())
+                .client(okHttpClient)
                 .build();
 
         enrollmentApi = retrofit.create(EnrollmentApi.class);

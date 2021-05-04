@@ -28,9 +28,8 @@ public class FingoSDK
     // Memebers
     protected static boolean sdkInitialized;
     @SuppressLint("StaticFieldLeak")
-    private static Context context;
     private static FingoUsbManager fingoUsbManager;
-    private static FingoRequestLogger fingoRequestLogger;
+    public static FingoRequestLogger fingoRequestLogger;
 
     private FingoSDK(){
     }
@@ -45,7 +44,6 @@ public class FingoSDK
             return FingoErrorCode.H1_UNEXPECTED;
         }
 
-        FingoSDK.context = context;
         Storage.getInstance().initialize(context);
 
         fingoUsbManager = new FingoUsbManager(context);
@@ -66,6 +64,7 @@ public class FingoSDK
     }
 
     public static FingoErrorCode initialize(Context context, FingoRequestLogger fingoRequestLogger){
+        FingoSDK.fingoRequestLogger = fingoRequestLogger;
         return FingoSDK.initialize(context);
     }
 
@@ -74,6 +73,10 @@ public class FingoSDK
 
         Log.i(TAG, "setFingoParams validation result: " + fingoParamsErrorCode);
         return fingoParamsErrorCode;
+    }
+
+    public static FingoParams getFingoParams(){
+        return FingoParams.getStoredParams();
     }
 
     public static String about(){

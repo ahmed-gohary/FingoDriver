@@ -15,6 +15,7 @@ import com.yelloco.fingodriver.FingoConstants;
 import com.yelloco.fingodriver.FingoPayDriver;
 import com.yelloco.fingodriver.FingoSDK;
 import com.yelloco.fingodriver.callbacks.FingoContract;
+import com.yelloco.fingodriver.callbacks.FingoRequestLogger;
 import com.yelloco.fingodriver.enums.Currency;
 import com.yelloco.fingodriver.enums.FingoErrorCode;
 import com.yelloco.fingodriver.models.fingo_operation.DisplayTextRequested;
@@ -57,7 +58,12 @@ public class MainActivity extends AppCompatActivity implements FingoContract.Fin
         fingoParams.setApiKey("1761900a-bc4b-4406-a0e4-eae4df1a38cd");
         fingoParams.setTemplateKeySeed("FvCoreSample1");
 
-        FingoSDK.initialize(this);
+        FingoSDK.initialize(this, new FingoRequestLogger() {
+            @Override
+            public void onLogDataAvailable(String s) {
+                Log.d(TAG, "onLogDataAvailable: " + s);
+            }
+        });
 
         FingoErrorCode fingoErrorCode = FingoSDK.setFingoParams(fingoParams);
 
