@@ -35,7 +35,7 @@ public class FingoSDK
     private FingoSDK(){
     }
 
-    public static FingoErrorCode initialize(Context context, FingoParams fingoParams){
+    public static FingoErrorCode initialize(Context context){
         if(sdkInitialized){
             Log.w(TAG, "FingoSDK Already INITIALIZED");
             return FingoErrorCode.H1_DRIVER_INITIALIZED;
@@ -47,12 +47,6 @@ public class FingoSDK
 
         FingoSDK.context = context;
         Storage.getInstance().initialize(context);
-
-        FingoErrorCode fingoParamsErrorCode = fingoParams.validate();
-
-        if(fingoParamsErrorCode != FingoErrorCode.H1_OK){
-            return fingoParamsErrorCode;
-        }
 
         fingoUsbManager = new FingoUsbManager(context);
         FingoErrorCode usbInitStatus = fingoUsbManager.initialize();
@@ -71,9 +65,17 @@ public class FingoSDK
         return FingoErrorCode.H1_OK;
     }
 
-    public static FingoErrorCode initialize(Context context, FingoParams fingoParams, FingoRequestLogger fingoRequestLogger){
-        FingoSDK.initialize(context, fingoParams);
+    public static FingoErrorCode initialize(Context context, FingoRequestLogger fingoRequestLogger){
+        return FingoSDK.initialize(context);
     }
+
+    public static FingoErrorCode setFingoParams(FingoParams fingoParams){
+        FingoErrorCode fingoParamsErrorCode = fingoParams.validate();
+
+        Log.i(TAG, "setFingoParams validation result: " + fingoParamsErrorCode);
+        return fingoParamsErrorCode;
+    }
+
     public static String about(){
         return FingoSDK.about(null);
     }

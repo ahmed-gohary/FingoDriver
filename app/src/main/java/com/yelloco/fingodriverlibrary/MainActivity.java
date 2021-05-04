@@ -16,7 +16,7 @@ import com.yelloco.fingodriver.FingoPayDriver;
 import com.yelloco.fingodriver.FingoSDK;
 import com.yelloco.fingodriver.callbacks.FingoContract;
 import com.yelloco.fingodriver.enums.Currency;
-import com.yelloco.fingodriver.enums.FingoCurrency;
+import com.yelloco.fingodriver.enums.FingoErrorCode;
 import com.yelloco.fingodriver.models.fingo_operation.DisplayTextRequested;
 import com.yelloco.fingodriver.models.fingo_operation.IdentifyData;
 import com.yelloco.fingodriver.models.fingo_operation.PaymentData;
@@ -56,7 +56,12 @@ public class MainActivity extends AppCompatActivity implements FingoContract.Fin
         fingoParams.setTerminalId("POS-540-002");
         fingoParams.setApiKey("1761900a-bc4b-4406-a0e4-eae4df1a38cd");
         fingoParams.setTemplateKeySeed("FvCoreSample1");
-        FingoSDK.initialize(this, fingoParams);
+
+        FingoSDK.initialize(this);
+
+        FingoErrorCode fingoErrorCode = FingoSDK.setFingoParams(fingoParams);
+
+        Log.d(TAG, "setFingoParams() returned: " + fingoErrorCode);
 
         initViews();
         setupListeners();
@@ -71,6 +76,7 @@ public class MainActivity extends AppCompatActivity implements FingoContract.Fin
         enroll = findViewById(R.id.enroll);
         payment = findViewById(R.id.payment);
         refund = findViewById(R.id.refund);
+
         fingoPresenter = new FingoPresenter(this, this);
     }
 
@@ -105,6 +111,7 @@ public class MainActivity extends AppCompatActivity implements FingoContract.Fin
                 fingoPresenter.refund(100, "8c04ad1b-e1e8-4752-b50c-e3c9dc70ad11", "96577222", terminalData, TIMEOUT);
             }
         });
+//        fingoPresenter.
     }
 
     @Override
