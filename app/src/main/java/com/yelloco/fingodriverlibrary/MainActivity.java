@@ -123,27 +123,21 @@ public class MainActivity extends AppCompatActivity implements FingoContract.Fin
     @Override
     public void onProcessingStarted() {
         Log.i(TAG, "onProcessingStarted");
-        runOnUiThread(() -> {
-            feedbackText.setText("");
-            progressBar.setVisibility(View.VISIBLE);
-            loadingLayout.setVisibility(View.VISIBLE);
-            buttonsLayout.setVisibility(View.INVISIBLE);
-        });
     }
 
     @Override
     public void onDisplayTextRequested(DisplayTextRequested displayTextRequested) {
+        Log.d(TAG, "onDisplayTextRequested: " + displayTextRequested.getType());
         Log.d(TAG, "onDisplayTextRequested: " + displayTextRequested.getText());
-        runOnUiThread(() -> {
-            feedbackText.setText(displayTextRequested.getText());
-        });
+        Log.d(TAG, "onDisplayTextRequested: " + displayTextRequested.getCode());
     }
 
     @Override
     public void onIdentifyData(IdentifyData identifyData) {
-        Log.d(TAG, "onOnlineIdentifyData: " + identifyData.isOnlineData());
         Log.d(TAG, "onOnlineIdentifyData: " + identifyData.getMemberId());
         Log.d(TAG, "onOnlineIdentifyData: " + identifyData.getVeinId());
+        Log.d(TAG, "onOnlineIdentifyData: " + identifyData.getVerificationTemplate());
+        Log.d(TAG, "onOnlineIdentifyData: " + identifyData.getEnrolmentTemplate());
     }
 
     @Override
@@ -162,25 +156,7 @@ public class MainActivity extends AppCompatActivity implements FingoContract.Fin
         Log.d(TAG, "onProcessingFinished: " + processingFinished.getText());
         Log.d(TAG, "onProcessingFinished: " + processingFinished.getErrorName());
         Log.d(TAG, "onProcessingFinished: " + processingFinished.getErrorCode());
-        Log.d(TAG, "onProcessingFinished: " + processingFinished.isStatus());
-
-        progressBar.setVisibility(View.INVISIBLE);
-
-        if(processingFinished.isStatus()){
-            feedbackText.setText("Operation Accepted");
-        }
-        else{
-            feedbackText.setText("Operation Declined");
-        }
-
-        new Thread(() -> {
-            SystemClock.sleep(3000);
-            runOnUiThread(() -> {
-                loadingLayout.setVisibility(View.INVISIBLE);
-                buttonsLayout.setVisibility(View.VISIBLE);
-            });
-        }).start();
-
+        Log.d(TAG, "onProcessingFinished: " + processingFinished.getStatus());
     }
 
     @Override
