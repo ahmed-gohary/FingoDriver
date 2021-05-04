@@ -8,6 +8,7 @@ import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
 import android.util.Log;
 
+import com.yelloco.fingodriver.callbacks.FingoRequestLogger;
 import com.yelloco.fingodriver.enums.FingoErrorCode;
 import com.yelloco.fingodriver.enums.StorageKey;
 import com.yelloco.fingodriver.utils.FingoParams;
@@ -29,6 +30,7 @@ public class FingoSDK
     @SuppressLint("StaticFieldLeak")
     private static Context context;
     private static FingoUsbManager fingoUsbManager;
+    private static FingoRequestLogger fingoRequestLogger;
 
     private FingoSDK(){
     }
@@ -69,6 +71,9 @@ public class FingoSDK
         return FingoErrorCode.H1_OK;
     }
 
+    public static FingoErrorCode initialize(Context context, FingoParams fingoParams, FingoRequestLogger fingoRequestLogger){
+        FingoSDK.initialize(context, fingoParams);
+    }
     public static String about(){
         return FingoSDK.about(null);
     }
