@@ -12,7 +12,7 @@ public class ProcessingFinished
     public ProcessingFinished(){
     }
 
-    public boolean isStatus() {
+    public boolean getStatus() {
         return status;
     }
 

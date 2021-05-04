@@ -38,6 +38,18 @@ public class DisplayTextRequested
         return text;
     }
 
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public Type getType() {
+        return type;
+    }
+
     @Override
     public String toString() {
         return "DisplayTextRequested{" +
