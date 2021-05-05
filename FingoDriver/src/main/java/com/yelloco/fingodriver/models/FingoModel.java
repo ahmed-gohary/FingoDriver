@@ -17,7 +17,8 @@ import com.yelloco.fingodriver.callbacks.FingoContract;
 import com.yelloco.fingodriver.enums.Currency;
 import com.yelloco.fingodriver.enums.FingoKeys;
 import com.yelloco.fingodriver.enums.FingoOperation;
-import com.yelloco.fingodriver.models.fingo_operation.DisplayTextRequested;
+import com.yelloco.fingodriver.models.fingo_operation.display_text_requested.DisplayMsgCode;
+import com.yelloco.fingodriver.models.fingo_operation.display_text_requested.DisplayTextRequested;
 import com.yelloco.fingodriver.models.fingo_operation.IdentifyData;
 import com.yelloco.fingodriver.models.fingo_operation.PaymentData;
 import com.yelloco.fingodriver.models.fingo_operation.ProcessingFinished;
@@ -118,7 +119,7 @@ public class FingoModel implements FingoContract.Model
             this.presenter.onProcessingFinished(this.buildProcessingFinishedEvent(false, FingoErrorCode.H1_SDK_INIT_FAILED_BLOCKED));
         }
         else{
-            this.presenter.onDisplayTextRequested(this.buildDisplayTextRequested(R.string.please_insert_finger));
+            this.presenter.onDisplayTextRequested(this.buildDisplayTextRequested(DisplayMsgCode.PLEASE_INSERT_FINGER));
         }
     }
 
@@ -133,7 +134,7 @@ public class FingoModel implements FingoContract.Model
 
         if(captureSession.first.equals(FingoErrorCode.H1_OK)){
             Log.i(TAG, "identify: Identification OK");
-            this.presenter.onDisplayTextRequested(buildDisplayTextRequested(R.string.indentifying_vein_please_wait));
+            this.presenter.onDisplayTextRequested(buildDisplayTextRequested(DisplayMsgCode.IDENTIFYING_PLEASE_WAIT));
             SystemClock.sleep(FingoConstants.ONE_SECOND);
         }
         else{
@@ -149,7 +150,7 @@ public class FingoModel implements FingoContract.Model
                 validateVeinIdAtFingoCloud(verificationTemplate.second);
             }
             else{
-                this.presenter.onDisplayTextRequested(buildDisplayTextRequested(FingoErrorCode.H1_INTERNET_PERMISSION_NOT_GRANTED.getDescriptionResId()));
+                this.presenter.onDisplayTextRequested(buildDisplayTextRequested(FingoErrorCode.H1_INTERNET_PERMISSION_NOT_GRANTED));
                 SystemClock.sleep(FingoConstants.HALF_SECOND);
                 this.presenter.onProcessingFinished(buildProcessingFinishedEvent(false, FingoErrorCode.H1_ONLINE_IDENTIFICATION_ERROR));
             }
@@ -168,57 +169,57 @@ public class FingoModel implements FingoContract.Model
         Log.d(TAG, "Starting enrollment process");
 
         Pair<FingoErrorCode, byte[]> firstCaptureSession = this.fingoPayDriver.capture(timeoutInMillis, () -> {
-            this.presenter.onDisplayTextRequested(this.buildDisplayTextRequested(R.string.please_insert_finger));
+            this.presenter.onDisplayTextRequested(this.buildDisplayTextRequested(DisplayMsgCode.PLEASE_INSERT_FINGER));
         });
 
         if(firstCaptureSession.first.equals(FingoErrorCode.H1_OK)){
             Log.d(TAG, "enroll: First capture is successful");
-            this.presenter.onDisplayTextRequested(this.buildDisplayTextRequested(R.string.indentifying_vein_please_wait));
+            this.presenter.onDisplayTextRequested(this.buildDisplayTextRequested(DisplayMsgCode.IDENTIFYING_PLEASE_WAIT));
             SystemClock.sleep(FingoConstants.HALF_SECOND);
-            this.presenter.onDisplayTextRequested(this.buildDisplayTextRequested(R.string.enrol_first_scan_success));
+            this.presenter.onDisplayTextRequested(this.buildDisplayTextRequested(DisplayMsgCode.ENROLL_FIRST_SCAN_SUCCESS));
             SystemClock.sleep(FingoConstants.HALF_SECOND);
         }
         else{
             Log.e(TAG, "enroll: First capture failed");
-            this.presenter.onDisplayTextRequested(this.buildDisplayTextRequested(firstCaptureSession.first.getDescriptionResId()));
+            this.presenter.onDisplayTextRequested(this.buildDisplayTextRequested(firstCaptureSession.first));
             this.presenter.onProcessingFinished(this.buildProcessingFinishedEvent(false, firstCaptureSession.first));
             return;
         }
 
         // scan second time
         Pair<FingoErrorCode, byte[]> secondCaptureSession = this.fingoPayDriver.capture(timeoutInMillis, () -> {
-            this.presenter.onDisplayTextRequested(this.buildDisplayTextRequested(R.string.please_insert_finger));
+            this.presenter.onDisplayTextRequested(this.buildDisplayTextRequested(DisplayMsgCode.PLEASE_INSERT_FINGER));
         });
 
         if(secondCaptureSession.first.equals(FingoErrorCode.H1_OK)){
             Log.d(TAG, "enroll: Second capture is successful");
-            this.presenter.onDisplayTextRequested(this.buildDisplayTextRequested(R.string.indentifying_vein_please_wait));
+            this.presenter.onDisplayTextRequested(this.buildDisplayTextRequested(DisplayMsgCode.IDENTIFYING_PLEASE_WAIT));
             SystemClock.sleep(FingoConstants.HALF_SECOND);
-            this.presenter.onDisplayTextRequested(this.buildDisplayTextRequested(R.string.enrol_second_scan_success));
+            this.presenter.onDisplayTextRequested(this.buildDisplayTextRequested(DisplayMsgCode.ENROLL_SECOND_SCAN_SUCCESS));
             SystemClock.sleep(FingoConstants.HALF_SECOND);
         }
         else{
             Log.e(TAG, "enroll: Second capture failed");
-            this.presenter.onDisplayTextRequested(this.buildDisplayTextRequested(secondCaptureSession.first.getDescriptionResId()));
+            this.presenter.onDisplayTextRequested(this.buildDisplayTextRequested(secondCaptureSession.first));
             this.presenter.onProcessingFinished(this.buildProcessingFinishedEvent(false, secondCaptureSession.first));
             return;
         }
 
         // scan third time
         Pair<FingoErrorCode, byte[]> thirdCaptureSession = this.fingoPayDriver.capture(timeoutInMillis, () -> {
-            this.presenter.onDisplayTextRequested(this.buildDisplayTextRequested(R.string.please_insert_finger));
+            this.presenter.onDisplayTextRequested(this.buildDisplayTextRequested(DisplayMsgCode.PLEASE_INSERT_FINGER));
         });
 
         if(thirdCaptureSession.first.equals(FingoErrorCode.H1_OK)){
             Log.d(TAG, "enroll: Third capture is successful");
-            this.presenter.onDisplayTextRequested(this.buildDisplayTextRequested(R.string.indentifying_vein_please_wait));
+            this.presenter.onDisplayTextRequested(this.buildDisplayTextRequested(DisplayMsgCode.IDENTIFYING_PLEASE_WAIT));
             SystemClock.sleep(FingoConstants.HALF_SECOND);
-            this.presenter.onDisplayTextRequested(this.buildDisplayTextRequested(R.string.enrol_third_scan_success));
+            this.presenter.onDisplayTextRequested(this.buildDisplayTextRequested(DisplayMsgCode.ENROLL_THIRD_SCAN_SUCCESS));
             SystemClock.sleep(FingoConstants.HALF_SECOND);
         }
         else{
             Log.e(TAG, "enroll: Third capture failed");
-            this.presenter.onDisplayTextRequested(this.buildDisplayTextRequested(secondCaptureSession.first.getDescriptionResId()));
+            this.presenter.onDisplayTextRequested(this.buildDisplayTextRequested(secondCaptureSession.first));
             this.presenter.onProcessingFinished(this.buildProcessingFinishedEvent(false, secondCaptureSession.first));
             return;
         }
@@ -230,26 +231,26 @@ public class FingoModel implements FingoContract.Model
         if(enrollmentTemplate.first.equals(FingoErrorCode.H1_OK)){
             Log.d(TAG, "enroll: Enrollment Template generated OK");
             Log.d(TAG, "enroll: " + enrollmentTemplate.second);
-            this.presenter.onDisplayTextRequested(this.buildDisplayTextRequested(R.string.enrollment_template_generated_successfully));
+            this.presenter.onDisplayTextRequested(this.buildDisplayTextRequested(DisplayMsgCode.ENROLL_TEMPLATE_SUCCESS));
         }
         else{
             Log.w(TAG, "enroll: Enrollment template generation Failed");
-            this.presenter.onDisplayTextRequested(this.buildDisplayTextRequested(enrollmentTemplate.first.getDescriptionResId()));
+            this.presenter.onDisplayTextRequested(this.buildDisplayTextRequested(enrollmentTemplate.first));
             this.presenter.onProcessingFinished(this.buildProcessingFinishedEvent(false, enrollmentTemplate.first));
             return;
         }
 
         Pair<FingoErrorCode, byte[]> verificationCaptureSession = this.fingoPayDriver.capture(timeoutInMillis, () -> {
-            this.presenter.onDisplayTextRequested(this.buildDisplayTextRequested(R.string.please_insert_finger));
+            this.presenter.onDisplayTextRequested(this.buildDisplayTextRequested(DisplayMsgCode.PLEASE_INSERT_FINGER));
         });
 
         if(verificationCaptureSession.first.equals(FingoErrorCode.H1_OK)){
             Log.d(TAG, "enroll: creating verification template:");
-            this.presenter.onDisplayTextRequested(this.buildDisplayTextRequested(R.string.indentifying_vein_please_wait));
+            this.presenter.onDisplayTextRequested(this.buildDisplayTextRequested(DisplayMsgCode.IDENTIFYING_PLEASE_WAIT));
             SystemClock.sleep(FingoConstants.HALF_SECOND);
         }
         else{
-            this.presenter.onDisplayTextRequested(this.buildDisplayTextRequested(verificationCaptureSession.first.getDescriptionResId()));
+            this.presenter.onDisplayTextRequested(this.buildDisplayTextRequested(verificationCaptureSession.first));
             this.presenter.onProcessingFinished(this.buildProcessingFinishedEvent(false, verificationCaptureSession.first));
             return;
         }
@@ -261,13 +262,13 @@ public class FingoModel implements FingoContract.Model
                 enrollAtFingoCloud(enrollmentTemplate.second, verificationTemplate.second);
             }
             else{
-                this.presenter.onDisplayTextRequested(buildDisplayTextRequested(FingoErrorCode.H1_INTERNET_PERMISSION_NOT_GRANTED.getDescriptionResId()));
+                this.presenter.onDisplayTextRequested(buildDisplayTextRequested(FingoErrorCode.H1_INTERNET_PERMISSION_NOT_GRANTED));
                 SystemClock.sleep(FingoConstants.HALF_SECOND);
                 this.presenter.onProcessingFinished(buildProcessingFinishedEvent(false, FingoErrorCode.H1_ONLINE_ENROLLMENT_ERROR));
             }
         }
         else{
-            this.presenter.onDisplayTextRequested(this.buildDisplayTextRequested(verificationTemplate.first.getDescriptionResId()));
+            this.presenter.onDisplayTextRequested(this.buildDisplayTextRequested(verificationTemplate.first));
             this.presenter.onProcessingFinished(this.buildProcessingFinishedEvent(false, verificationTemplate.first));
         }
     }
@@ -284,7 +285,7 @@ public class FingoModel implements FingoContract.Model
 
         if(captureSession.first.equals(FingoErrorCode.H1_OK)){
             Log.i(TAG, "identify: Identification OK");
-            this.presenter.onDisplayTextRequested(buildDisplayTextRequested(R.string.indentifying_vein_please_wait));
+            this.presenter.onDisplayTextRequested(buildDisplayTextRequested(DisplayMsgCode.IDENTIFYING_PLEASE_WAIT));
             SystemClock.sleep(FingoConstants.ONE_SECOND);
         }
         else{
@@ -300,7 +301,7 @@ public class FingoModel implements FingoContract.Model
                 payWithVeinIdAtFingoCloud(totalAmount, currency, totalDiscount, posData, verificationTemplate.second);
             }
             else{
-                this.presenter.onDisplayTextRequested(buildDisplayTextRequested(FingoErrorCode.H1_INTERNET_PERMISSION_NOT_GRANTED.getDescriptionResId()));
+                this.presenter.onDisplayTextRequested(buildDisplayTextRequested(FingoErrorCode.H1_INTERNET_PERMISSION_NOT_GRANTED));
                 SystemClock.sleep(FingoConstants.HALF_SECOND);
                 this.presenter.onProcessingFinished(buildProcessingFinishedEvent(false, FingoErrorCode.H1_ONLINE_PAYMENT_ERROR));
             }
@@ -323,7 +324,7 @@ public class FingoModel implements FingoContract.Model
 
         if(captureSession.first.equals(FingoErrorCode.H1_OK)){
             Log.i(TAG, "identify: Identification OK");
-            this.presenter.onDisplayTextRequested(buildDisplayTextRequested(R.string.indentifying_vein_please_wait));
+            this.presenter.onDisplayTextRequested(buildDisplayTextRequested(DisplayMsgCode.IDENTIFYING_PLEASE_WAIT));
             SystemClock.sleep(FingoConstants.ONE_SECOND);
         }
         else{
@@ -339,7 +340,7 @@ public class FingoModel implements FingoContract.Model
                 refundWithVeinIdAtFingoCloud(refundAmount, transactionIdToRefund, gatewayTransactionIdToRefund, terminalData, verificationTemplate.second);
             }
             else{
-                this.presenter.onDisplayTextRequested(buildDisplayTextRequested(FingoErrorCode.H1_INTERNET_PERMISSION_NOT_GRANTED.getDescriptionResId()));
+                this.presenter.onDisplayTextRequested(buildDisplayTextRequested(FingoErrorCode.H1_INTERNET_PERMISSION_NOT_GRANTED));
                 SystemClock.sleep(FingoConstants.HALF_SECOND);
                 this.presenter.onProcessingFinished(buildProcessingFinishedEvent(false, FingoErrorCode.H1_ONLINE_REFUND_ERROR));
             }
@@ -380,7 +381,7 @@ public class FingoModel implements FingoContract.Model
                 }
                 else {
                     Log.i(TAG, "onResponse: " + identifyResponse.getVeinId());
-                    presenter.onDisplayTextRequested(buildDisplayTextRequested(R.string.finger_vein_validation_success));
+                    presenter.onDisplayTextRequested(buildDisplayTextRequested(DisplayMsgCode.ONLINE_VEIN_IDENTIFY_SUCCESS));
                     presenter.onIdentifyData(buildOnlineIdentifyResponse(identifyResponse));
                     SystemClock.sleep(FingoConstants.HALF_SECOND);
                     presenter.onProcessingFinished(buildProcessingFinishedEvent(true, FingoErrorCode.H1_OK));
@@ -391,7 +392,7 @@ public class FingoModel implements FingoContract.Model
             public void onFailure(Call<IdentifyResponse> call, Throwable t) {
                 Log.i(TAG, "onResponse error: " + t.getMessage());
                 Log.i(TAG, "onFailure: cancelled: " + call.isCanceled());
-                presenter.onDisplayTextRequested(buildDisplayTextRequested(FingoErrorCode.H1_ONLINE_IDENTIFICATION_ERROR.getDescriptionResId()));
+                presenter.onDisplayTextRequested(buildDisplayTextRequested(FingoErrorCode.H1_ONLINE_IDENTIFICATION_ERROR));
                 presenter.onProcessingFinished(buildProcessingFinishedEvent(false, FingoErrorCode.H1_ONLINE_IDENTIFICATION_ERROR));
             }
         });
@@ -416,12 +417,12 @@ public class FingoModel implements FingoContract.Model
                 EnrollmentResponse enrollmentResponse = response.body();
                 if(! response.isSuccessful() || enrollmentResponse == null){
                     Log.e(TAG, "onResponse: Enrollment Response is NULL");
-                    presenter.onDisplayTextRequested(buildDisplayTextRequested(FingoErrorCode.H1_ONLINE_ENROLLMENT_ERROR.getDescriptionResId()));
+                    presenter.onDisplayTextRequested(buildDisplayTextRequested(FingoErrorCode.H1_ONLINE_ENROLLMENT_ERROR));
                     presenter.onProcessingFinished(buildProcessingFinishedEvent(false, FingoErrorCode.H1_ONLINE_ENROLLMENT_ERROR));
                 }
                 else{
                     Log.i(TAG, "onResponse: " + enrollmentResponse.getVeinId());
-                    presenter.onDisplayTextRequested(buildDisplayTextRequested(R.string.finger_vein_enrollment_success));
+                    presenter.onDisplayTextRequested(buildDisplayTextRequested(DisplayMsgCode.ONLINE_VEIN_ENROLL_SUCCESS));
                     presenter.onIdentifyData(buildOnlineIdentifyResponse(enrollmentResponse));
                     SystemClock.sleep(FingoConstants.HALF_SECOND);
                     presenter.onProcessingFinished(buildProcessingFinishedEvent(true, FingoErrorCode.H1_OK));
@@ -432,7 +433,7 @@ public class FingoModel implements FingoContract.Model
             @Override
             public void onFailure(Call<EnrollmentResponse> call, Throwable t) {
                 Log.i(TAG, "onResponse error: " + t.getMessage());
-                presenter.onDisplayTextRequested(buildDisplayTextRequested(FingoErrorCode.H1_ONLINE_ENROLLMENT_ERROR.getDescriptionResId()));
+                presenter.onDisplayTextRequested(buildDisplayTextRequested(FingoErrorCode.H1_ONLINE_ENROLLMENT_ERROR));
                 presenter.onProcessingFinished(buildProcessingFinishedEvent(false, FingoErrorCode.H1_ONLINE_ENROLLMENT_ERROR));
             }
         });
@@ -463,7 +464,7 @@ public class FingoModel implements FingoContract.Model
             public void onFailure(Call<PaymentResponse> call, Throwable t) {
                 Log.i(TAG, "onResponse error: " + t.getMessage());
                 Log.i(TAG, "onFailure: cancelled: " + call.isCanceled());
-                presenter.onDisplayTextRequested(buildDisplayTextRequested(FingoErrorCode.H1_ONLINE_PAYMENT_ERROR.getDescriptionResId()));
+                presenter.onDisplayTextRequested(buildDisplayTextRequested(FingoErrorCode.H1_ONLINE_PAYMENT_ERROR));
                 presenter.onProcessingFinished(buildProcessingFinishedEvent(false, FingoErrorCode.H1_ONLINE_PAYMENT_ERROR));
             }
         });
@@ -494,7 +495,7 @@ public class FingoModel implements FingoContract.Model
             public void onFailure(Call<RefundResponse> call, Throwable t) {
                 Log.i(TAG, "onResponse error: " + t.getMessage());
                 Log.i(TAG, "onFailure: cancelled: " + call.isCanceled());
-                presenter.onDisplayTextRequested(buildDisplayTextRequested(FingoErrorCode.H1_ONLINE_PAYMENT_ERROR.getDescriptionResId()));
+                presenter.onDisplayTextRequested(buildDisplayTextRequested(FingoErrorCode.H1_ONLINE_PAYMENT_ERROR));
                 presenter.onProcessingFinished(buildProcessingFinishedEvent(false, FingoErrorCode.H1_ONLINE_PAYMENT_ERROR));
             }
         });
@@ -511,7 +512,7 @@ public class FingoModel implements FingoContract.Model
         }
         else{
             Log.d(TAG, "UNEXPECTED RESPONSE CODE: " + responseCode);
-            presenter.onDisplayTextRequested(buildDisplayTextRequested(R.string.payment_declined));
+            presenter.onDisplayTextRequested(buildDisplayTextRequested(DisplayMsgCode.PAYMENT_DECLINED));
             presenter.onPaymentData(null, null);
             SystemClock.sleep(FingoConstants.HALF_SECOND);
             presenter.onProcessingFinished(buildProcessingFinishedEvent(false, FingoErrorCode.H1_ONLINE_PAYMENT_ERROR));
@@ -527,7 +528,7 @@ public class FingoModel implements FingoContract.Model
         else {
             Log.i(TAG, "onResponse: " + paymentResponse.toString());
             if(paymentResponse.getTransactionId() != null && paymentResponse.getGatewayAuthCode() != null){
-                presenter.onDisplayTextRequested(buildDisplayTextRequested(R.string.payment_accepted));
+                presenter.onDisplayTextRequested(buildDisplayTextRequested(DisplayMsgCode.PAYMENT_ACCEPTED));
 
                 // create OK object
                 FingoErrorObject fingoOKObject = new FingoErrorObject(0, "Success");
@@ -539,7 +540,7 @@ public class FingoModel implements FingoContract.Model
                 presenter.onProcessingFinished(buildProcessingFinishedEvent(true, FingoErrorCode.H1_OK));
             }
             else{
-                presenter.onDisplayTextRequested(buildDisplayTextRequested(R.string.payment_declined));
+                presenter.onDisplayTextRequested(buildDisplayTextRequested(DisplayMsgCode.PAYMENT_DECLINED));
             }
         }
     }
@@ -560,7 +561,7 @@ public class FingoModel implements FingoContract.Model
             fingoErrorResponse.setFingoErrorList(fingoErrorObjectList);
         }
 
-        presenter.onDisplayTextRequested(buildDisplayTextRequested(R.string.payment_declined));
+        presenter.onDisplayTextRequested(buildDisplayTextRequested(DisplayMsgCode.PAYMENT_DECLINED));
         presenter.onPaymentData(new PaymentData(), fingoErrorResponse);
         SystemClock.sleep(FingoConstants.HALF_SECOND);
         presenter.onProcessingFinished(buildProcessingFinishedEvent(false, FingoErrorCode.H1_ONLINE_PAYMENT_ERROR));
@@ -577,7 +578,7 @@ public class FingoModel implements FingoContract.Model
         }
         else{
             Log.d(TAG, "UNEXPECTED RESPONSE CODE: " + responseCode);
-            presenter.onDisplayTextRequested(buildDisplayTextRequested(R.string.payment_declined));
+            presenter.onDisplayTextRequested(buildDisplayTextRequested(DisplayMsgCode.REFUND_DECLINED));
             presenter.onPaymentData(null, null);
             SystemClock.sleep(FingoConstants.HALF_SECOND);
             presenter.onProcessingFinished(buildProcessingFinishedEvent(false, FingoErrorCode.H1_ONLINE_PAYMENT_ERROR));
@@ -593,7 +594,7 @@ public class FingoModel implements FingoContract.Model
         else {
             Log.i(TAG, "onResponse: " + refundResponse.toString());
             if(refundResponse.getTransactionId() != null && refundResponse.getGatewayAuthCode() != null){
-                presenter.onDisplayTextRequested(buildDisplayTextRequested(R.string.refund_accepted));
+                presenter.onDisplayTextRequested(buildDisplayTextRequested(DisplayMsgCode.REFUND_ACCEPTED));
 
                 // create OK object
                 FingoErrorObject fingoOKObject = new FingoErrorObject(0, "Success");
@@ -605,7 +606,7 @@ public class FingoModel implements FingoContract.Model
                 presenter.onProcessingFinished(buildProcessingFinishedEvent(true, FingoErrorCode.H1_OK));
             }
             else{
-                presenter.onDisplayTextRequested(buildDisplayTextRequested(R.string.refund_declined));
+                presenter.onDisplayTextRequested(buildDisplayTextRequested(DisplayMsgCode.REFUND_DECLINED));
             }
         }
     }
@@ -626,7 +627,7 @@ public class FingoModel implements FingoContract.Model
             fingoErrorResponse.setFingoErrorList(fingoErrorObjectList);
         }
 
-        presenter.onDisplayTextRequested(buildDisplayTextRequested(R.string.refund_declined));
+        presenter.onDisplayTextRequested(buildDisplayTextRequested(DisplayMsgCode.REFUND_DECLINED));
         presenter.onPaymentData(new PaymentData(), fingoErrorResponse);
         SystemClock.sleep(FingoConstants.HALF_SECOND);
         presenter.onProcessingFinished(buildProcessingFinishedEvent(false, FingoErrorCode.H1_ONLINE_REFUND_ERROR));
@@ -641,7 +642,7 @@ public class FingoModel implements FingoContract.Model
         Log.d(TAG, "Canceling Result: " + cancelErrorCode.name());
         if(cancelErrorCode.equals(FingoErrorCode.H1_CANCELLED)){
             Log.d(TAG, "Internal Cancel Function DONE");
-            this.presenter.onDisplayTextRequested(this.buildDisplayTextRequested(R.string.operation_cancelled));
+            this.presenter.onDisplayTextRequested(this.buildDisplayTextRequested(DisplayMsgCode.CANCELLED));
         }
     }
 
@@ -667,8 +668,13 @@ public class FingoModel implements FingoContract.Model
         }
     }
 
-    private DisplayTextRequested buildDisplayTextRequested(int msgId){
-        DisplayTextRequested displayTextRequested = new DisplayTextRequested(context.getString(msgId));
+    private DisplayTextRequested buildDisplayTextRequested(DisplayMsgCode displayMsgCode){
+        DisplayTextRequested displayTextRequested = new DisplayTextRequested(context, displayMsgCode);
+        return displayTextRequested;
+    }
+
+    private DisplayTextRequested buildDisplayTextRequested(FingoErrorCode fingoErrorCode){
+        DisplayTextRequested displayTextRequested = new DisplayTextRequested(context, fingoErrorCode);
         return displayTextRequested;
     }
 

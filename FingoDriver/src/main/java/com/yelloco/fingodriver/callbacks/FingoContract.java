@@ -2,7 +2,7 @@ package com.yelloco.fingodriver.callbacks;
 
 import com.yelloco.fingodriver.enums.Currency;
 import com.yelloco.fingodriver.enums.FingoOperation;
-import com.yelloco.fingodriver.models.fingo_operation.DisplayTextRequested;
+import com.yelloco.fingodriver.models.fingo_operation.display_text_requested.DisplayTextRequested;
 import com.yelloco.fingodriver.models.fingo_operation.IdentifyData;
 import com.yelloco.fingodriver.models.fingo_operation.PaymentData;
 import com.yelloco.fingodriver.models.fingo_operation.ProcessingFinished;
