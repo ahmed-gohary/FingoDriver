@@ -117,12 +117,17 @@ public class MainActivity extends AppCompatActivity implements FingoContract.Fin
                 fingoPresenter.refund(100, "8c04ad1b-e1e8-4752-b50c-e3c9dc70ad11", "96577222", terminalData, TIMEOUT);
             }
         });
-//        fingoPresenter.
     }
 
     @Override
     public void onProcessingStarted() {
         Log.i(TAG, "onProcessingStarted");
+        runOnUiThread(() -> {
+            feedbackText.setText("");
+            progressBar.setVisibility(View.VISIBLE);
+            loadingLayout.setVisibility(View.VISIBLE);
+            buttonsLayout.setVisibility(View.INVISIBLE);
+        });
     }
 
     @Override
@@ -130,6 +135,12 @@ public class MainActivity extends AppCompatActivity implements FingoContract.Fin
         Log.d(TAG, "onDisplayTextRequested: " + displayTextRequested.getType());
         Log.d(TAG, "onDisplayTextRequested: " + displayTextRequested.getText());
         Log.d(TAG, "onDisplayTextRequested: " + displayTextRequested.getCode());
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                feedbackText.setText(displayTextRequested.getText());
+            }
+        });
     }
 
     @Override
@@ -157,6 +168,24 @@ public class MainActivity extends AppCompatActivity implements FingoContract.Fin
         Log.d(TAG, "onProcessingFinished: " + processingFinished.getErrorName());
         Log.d(TAG, "onProcessingFinished: " + processingFinished.getErrorCode());
         Log.d(TAG, "onProcessingFinished: " + processingFinished.getStatus());
+
+        progressBar.setVisibility(View.INVISIBLE);
+
+        if(processingFinished.getStatus()){
+            feedbackText.setText("Operation Accepted");
+        }
+        else{
+            feedbackText.setText("Operation Declined");
+        }
+
+        new Thread(() -> {
+            SystemClock.sleep(3000);
+            runOnUiThread(() -> {
+                loadingLayout.setVisibility(View.INVISIBLE);
+                buttonsLayout.setVisibility(View.VISIBLE);
+            });
+        }).start();
+
     }
 
     @Override

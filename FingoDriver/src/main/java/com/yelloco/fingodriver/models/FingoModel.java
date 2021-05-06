@@ -258,6 +258,7 @@ public class FingoModel implements FingoContract.Model
         Pair<FingoErrorCode, String> verificationTemplate = this.fingoPayDriver.createVerificationTemplate(verificationCaptureSession.second);
 
         if(verificationTemplate.first.equals(FingoErrorCode.H1_OK)){
+            Log.d(TAG, "enroll: verification template created:\n" + verificationTemplate.second);
             if(context.checkSelfPermission(Manifest.permission.INTERNET) == PackageManager.PERMISSION_GRANTED){
                 enrollAtFingoCloud(enrollmentTemplate.second, verificationTemplate.second);
             }
