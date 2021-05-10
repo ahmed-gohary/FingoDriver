@@ -30,6 +30,7 @@
     <string name="fingo_error_online_payment_error">Online Payment Failed</string>
     <string name="fingo_error_online_refund_error">Online Refund Failed</string>
     <string name="fingo_error_sdk_init_failed_can_not_proceed">SDK initialization failed can not proceed</string>
+    <string name="fingo_error_params_not_set">FingoSDK Params are missing</string>
 
     <string name="please_prepare_to_scan_finger_identify">Please Prepare to scan your finger 1 time for identification</string>
     <string name="please_prepare_to_scan_finger_enroll">Please Prepare to scan your finger 3 times for enrollment</string>

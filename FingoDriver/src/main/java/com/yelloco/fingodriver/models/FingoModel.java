@@ -17,6 +17,7 @@ import com.yelloco.fingodriver.callbacks.FingoContract;
 import com.yelloco.fingodriver.enums.Currency;
 import com.yelloco.fingodriver.enums.FingoKeys;
 import com.yelloco.fingodriver.enums.FingoOperation;
+import com.yelloco.fingodriver.enums.StorageKey;
 import com.yelloco.fingodriver.models.fingo_operation.display_text_requested.DisplayMsgCode;
 import com.yelloco.fingodriver.models.fingo_operation.display_text_requested.DisplayTextRequested;
 import com.yelloco.fingodriver.models.fingo_operation.IdentifyData;
@@ -40,6 +41,7 @@ import com.yelloco.fingodriver.models.networking.refund.RefundApi;
 import com.yelloco.fingodriver.models.networking.refund.RefundRequest;
 import com.yelloco.fingodriver.models.networking.refund.RefundResponse;
 import com.yelloco.fingodriver.models.networking.refund.TerminalData;
+import com.yelloco.fingodriver.utils.Storage;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -78,7 +80,7 @@ public class FingoModel implements FingoContract.Model
     public FingoModel(FingoContract.Presenter presenter, Context context){
         this.context = context;
         this.presenter = presenter;
-        this.canProceed = FingoSDK.isSdkInitialized();
+        this.canProceed = (FingoSDK.isSdkInitialized() && Storage.getInstance().getBoolean(StorageKey.PARAMS_STATUS.name(), false));
         this.fingoPayDriver = FingoPayDriver.getInstance();
         this.fingoRequestHelper = new FingoRequestHelper();
 
@@ -116,7 +118,12 @@ public class FingoModel implements FingoContract.Model
         this.presenter.onProcessingStarted();
 
         if(! this.canProceed){
-            this.presenter.onProcessingFinished(this.buildProcessingFinishedEvent(false, FingoErrorCode.H1_SDK_INIT_FAILED_BLOCKED));
+            if(!Storage.getInstance().getBoolean(StorageKey.PARAMS_STATUS.name(), false)){
+                this.presenter.onProcessingFinished(this.buildProcessingFinishedEvent(false, FingoErrorCode.H1_SDK_PARAMS_NOT_SET));
+            }
+            else{
+                this.presenter.onProcessingFinished(this.buildProcessingFinishedEvent(false, FingoErrorCode.H1_SDK_INIT_FAILED_BLOCKED));
+            }
         }
         else{
             this.presenter.onDisplayTextRequested(this.buildDisplayTextRequested(DisplayMsgCode.PLEASE_INSERT_FINGER));

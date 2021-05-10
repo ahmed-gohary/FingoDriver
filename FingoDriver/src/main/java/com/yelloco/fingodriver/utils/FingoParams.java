@@ -133,6 +133,10 @@ public class FingoParams
             return FingoErrorCode.H1_INVALID_TEMPLATE_KEY;
         }
 
+        return FingoErrorCode.H1_OK;
+    }
+
+    public void loadParams(){
         if(consecutiveScanInterval < FingoConstants.ONE_SECOND){
             consecutiveScanInterval = FingoConstants.ONE_SECOND;
         }
@@ -145,8 +149,7 @@ public class FingoParams
         Storage.getInstance().storeString(StorageKey.TEMPLATE_KEY.name(), this.templateKeySeed);
         Storage.getInstance().storeInt(StorageKey.CONSECUTIVE_SCAN_INTERVAL.name(), consecutiveScanInterval);
         Storage.getInstance().storeString(StorageKey.LOCATION.name(), (location == null) ? "" : location);
-
-        return FingoErrorCode.H1_OK;
+        Storage.getInstance().storeBoolean(StorageKey.PARAMS_STATUS.name(), true);
     }
 
     public static FingoParams getStoredParams(){

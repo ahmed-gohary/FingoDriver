@@ -35,7 +35,7 @@ public class FingoRequestHelper
     private void fillApiKey() {
         // add api_key
         String api_key = Storage.getInstance().getString(StorageKey.API_KEY.name());
-        if(! api_key.startsWith("x-apikey")){
+        if(api_key != null && !api_key.startsWith("x-apikey")){
             api_key = "x-apikey " + api_key;
         }
         this.headers.put(Key.AUTHORIZATION.getValue(), api_key);

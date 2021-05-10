@@ -38,6 +38,7 @@ public enum FingoErrorCode
     H1_ONLINE_PAYMENT_ERROR(Integer.MIN_VALUE + 4, R.string.fingo_error_online_payment_error),
     H1_ONLINE_REFUND_ERROR(Integer.MIN_VALUE + 5, R.string.fingo_error_online_refund_error),
     H1_SDK_INIT_FAILED_BLOCKED(Integer.MIN_VALUE + 6, R.string.fingo_error_sdk_init_failed_can_not_proceed),
+    H1_SDK_PARAMS_NOT_SET(Integer.MIN_VALUE + 7, R.string.fingo_error_params_not_set),
 
     ;
 

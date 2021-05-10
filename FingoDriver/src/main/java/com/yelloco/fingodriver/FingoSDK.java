@@ -45,6 +45,7 @@ public class FingoSDK
         }
 
         Storage.getInstance().initialize(context);
+        Storage.getInstance().storeBoolean(StorageKey.PARAMS_STATUS.name(), false);
 
         fingoUsbManager = new FingoUsbManager(context);
         FingoErrorCode usbInitStatus = fingoUsbManager.initialize();
@@ -70,6 +71,13 @@ public class FingoSDK
 
     public static FingoErrorCode setFingoParams(FingoParams fingoParams){
         FingoErrorCode fingoParamsErrorCode = fingoParams.validate();
+
+        if(fingoParamsErrorCode == FingoErrorCode.H1_OK){
+            fingoParams.loadParams();
+        }
+        else{
+            Storage.getInstance().storeBoolean(StorageKey.PARAMS_STATUS.name(), false);
+        }
 
         Log.i(TAG, "setFingoParams validation result: " + fingoParamsErrorCode);
         return fingoParamsErrorCode;

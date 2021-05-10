@@ -10,4 +10,5 @@ public enum StorageKey
     API_KEY,
     TEMPLATE_KEY,
     LOCATION,
+    PARAMS_STATUS,
 }
