@@ -76,13 +76,19 @@ public class FingoPayDriver
             e.printStackTrace();
             return FingoErrorCode.parseErrorCode(e.getH1Error());
         }
+        catch (Exception e){
+            this.templateKeySeedSet = false;
+            Log.e(TAG, "Failed to set template key" + e);
+            e.printStackTrace();
+            return FingoErrorCode.H1_INVALID_TEMPLATE_KEY;
+        }
     }
 
     public FingoErrorCode openDevice() {
         String templateKeySeed = Storage.getInstance().getString(StorageKey.TEMPLATE_KEY.name());
         FingoErrorCode templateKeySeedErrorCode = this.setCryptoTemplateKey(templateKeySeed);;
         if(! FingoErrorCode.H1_OK.equals(templateKeySeedErrorCode)){
-            Log.w(TAG, "Fingo Template Key Not set");
+            Log.e(TAG, "Fingo Template Key Not set");
             return templateKeySeedErrorCode;
         }
 

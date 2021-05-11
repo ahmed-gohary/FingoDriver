@@ -1,6 +1,7 @@
 package com.yelloco.fingodriver.repository;
 
 import android.app.Activity;
+import android.content.Context;
 
 import com.yelloco.fingodriver.callbacks.FingoContract;
 import com.yelloco.fingodriver.enums.Currency;
@@ -19,12 +20,10 @@ public class FingoPresenter implements FingoContract.Presenter
     // Members
     private FingoContract.FingoListener fingoListener;
     private FingoContract.Model model;
-    private Activity activity;
 
-    public FingoPresenter(Activity activity, FingoContract.FingoListener fingoListener){
-        this.activity = activity;
+    public FingoPresenter(Context context, FingoContract.FingoListener fingoListener){
         this.fingoListener = fingoListener;
-        this.model = new FingoModel(this, activity);
+        this.model = new FingoModel(this, context);
     }
 
     public void identify(int timeoutInMillis){
@@ -110,8 +109,6 @@ public class FingoPresenter implements FingoContract.Presenter
 
     @Override
     public void onProcessingFinished(ProcessingFinished processingFinished) {
-        activity.runOnUiThread(() -> {
-            this.fingoListener.onProcessingFinished(processingFinished);
-        });
+        this.fingoListener.onProcessingFinished(processingFinished);
     }
 }

@@ -50,13 +50,13 @@ public class MainActivity extends AppCompatActivity implements FingoContract.Fin
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-//        FingoParams fingoParams = new FingoParams();
+        FingoParams fingoParams = new FingoParams();
 //        fingoParams.setCloudUrl("https://sandbox.fingo.to/api/");
 //        fingoParams.setPartnerId("kan-dev");
 //        fingoParams.setMerchantId("1dd56035-d914-44bb-b806-3b85f714fa91");
 //        fingoParams.setTerminalId("POS-540-002");
 //        fingoParams.setApiKey("1761900a-bc4b-4406-a0e4-eae4df1a38cd");
-//        fingoParams.setTemplateKeySeed("FvCoreSample1");
+        fingoParams.setTemplateKeySeed("FvCoreSample1");
 
         FingoSDK.initialize(this, new FingoRequestLogger() {
             @Override
@@ -65,9 +65,9 @@ public class MainActivity extends AppCompatActivity implements FingoContract.Fin
             }
         });
 
-//        FingoErrorCode fingoErrorCode = FingoSDK.setFingoParams(fingoParams);
+        FingoErrorCode fingoErrorCode = FingoSDK.setFingoParams(fingoParams);
 
-//        Log.d(TAG, "setFingoParams() returned: " + fingoErrorCode);
+        Log.d(TAG, "setFingoParams() returned: " + fingoErrorCode);
 
         initViews();
         setupListeners();
@@ -112,9 +112,20 @@ public class MainActivity extends AppCompatActivity implements FingoContract.Fin
         refund.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                TerminalData terminalData = new TerminalData();
-                terminalData.setLocation("Cairo");
-                fingoPresenter.refund(100, "8c04ad1b-e1e8-4752-b50c-e3c9dc70ad11", "96577222", terminalData, TIMEOUT);
+                FingoParams fingoParams = new FingoParams();
+                fingoParams.setCloudUrl("https://sandbox.fingo.to/api/");
+                fingoParams.setPartnerId("kan-dev");
+                fingoParams.setMerchantId("1dd56035-d914-44bb-b806-3b85f714fa91");
+                fingoParams.setTerminalId("POS-540-002");
+                fingoParams.setApiKey("1761900a-bc4b-4406-a0e4-eae4df1a38cd");
+                fingoParams.setTemplateKeySeed("FvCoreSample1");
+                FingoErrorCode fingoErrorCode = FingoSDK.setFingoParams(fingoParams);
+
+                Log.d(TAG, "setFingoParams() returned: " + fingoErrorCode);
+
+//                TerminalData terminalData = new TerminalData();
+//                terminalData.setLocation("Cairo");
+//                fingoPresenter.refund(100, "8c04ad1b-e1e8-4752-b50c-e3c9dc70ad11", "96577222", terminalData, TIMEOUT);
             }
         });
     }
@@ -169,14 +180,16 @@ public class MainActivity extends AppCompatActivity implements FingoContract.Fin
         Log.d(TAG, "onProcessingFinished: " + processingFinished.getErrorCode());
         Log.d(TAG, "onProcessingFinished: " + processingFinished.getStatus());
 
-        progressBar.setVisibility(View.INVISIBLE);
+        runOnUiThread(() -> {
+            progressBar.setVisibility(View.INVISIBLE);
 
-        if(processingFinished.getStatus()){
-            feedbackText.setText("Operation Accepted");
-        }
-        else{
-            feedbackText.setText("Operation Declined");
-        }
+            if(processingFinished.getStatus()){
+                feedbackText.setText("Operation Accepted");
+            }
+            else{
+                feedbackText.setText("Operation Declined");
+            }
+        });
 
         new Thread(() -> {
             SystemClock.sleep(3000);
@@ -185,7 +198,6 @@ public class MainActivity extends AppCompatActivity implements FingoContract.Fin
                 buttonsLayout.setVisibility(View.VISIBLE);
             });
         }).start();
-
     }
 
     @Override

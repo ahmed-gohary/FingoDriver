@@ -165,4 +165,8 @@ public class FingoParams
 
         return fingoParams;
     }
+
+    public static boolean status(){
+        return Storage.getInstance().getBoolean(StorageKey.PARAMS_STATUS.name(), false);
+    }
 }

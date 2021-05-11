@@ -68,6 +68,8 @@ public class FingoModel implements FingoContract.Model
     private FingoPayDriver fingoPayDriver;
     private FingoRequestHelper fingoRequestHelper;
     private Retrofit retrofit;
+    private OkHttpClient okHttpClient;
+    private boolean retrofitInitialized;
     private EnrollmentApi enrollmentApi;
     private Call<EnrollmentResponse> enrollmentResponseCall;
     private IdentifyApi identifyApi;
@@ -97,18 +99,7 @@ public class FingoModel implements FingoContract.Model
         });
         httpLoggingInterceptor.level(HttpLoggingInterceptor.Level.HEADERS);
         httpLoggingInterceptor.level(HttpLoggingInterceptor.Level.BODY);
-        OkHttpClient okHttpClient = new OkHttpClient.Builder().addInterceptor(httpLoggingInterceptor).build();
-
-        this.retrofit = new Retrofit.Builder()
-                .baseUrl(fingoRequestHelper.getFingoCloudBaseUrl())
-                .addConverterFactory(GsonConverterFactory.create())
-                .client(okHttpClient)
-                .build();
-
-        enrollmentApi = retrofit.create(EnrollmentApi.class);
-        identifyApi = retrofit.create(IdentifyApi.class);
-        paymentApi = retrofit.create(PaymentApi.class);
-        refundApi = retrofit.create(RefundApi.class);
+        okHttpClient = new OkHttpClient.Builder().addInterceptor(httpLoggingInterceptor).build();
     }
 
     public void invoke(FingoOperation fingoOperation){
@@ -116,6 +107,25 @@ public class FingoModel implements FingoContract.Model
 
         operationCancelled = false;
         this.presenter.onProcessingStarted();
+        this.canProceed = (FingoSDK.isSdkInitialized() && Storage.getInstance().getBoolean(StorageKey.PARAMS_STATUS.name(), false));
+
+        if(canProceed && !retrofitInitialized){
+            retrofitInitialized = true;
+            this.retrofit = new Retrofit.Builder()
+                    .baseUrl(fingoRequestHelper.getFingoCloudBaseUrl())
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .client(okHttpClient)
+                    .build();
+
+            enrollmentApi = retrofit.create(EnrollmentApi.class);
+            identifyApi = retrofit.create(IdentifyApi.class);
+            paymentApi = retrofit.create(PaymentApi.class);
+            refundApi = retrofit.create(RefundApi.class);
+        }
+        else{
+            Log.e(TAG, "Can't Proceed, Not Initializing Networking: " + canProceed
+            + " " + retrofitInitialized);
+        }
 
         if(! this.canProceed){
             if(!Storage.getInstance().getBoolean(StorageKey.PARAMS_STATUS.name(), false)){
@@ -124,6 +134,7 @@ public class FingoModel implements FingoContract.Model
             else{
                 this.presenter.onProcessingFinished(this.buildProcessingFinishedEvent(false, FingoErrorCode.H1_SDK_INIT_FAILED_BLOCKED));
             }
+            this.operationCancelled = true;
         }
         else{
             this.presenter.onDisplayTextRequested(this.buildDisplayTextRequested(DisplayMsgCode.PLEASE_INSERT_FINGER));

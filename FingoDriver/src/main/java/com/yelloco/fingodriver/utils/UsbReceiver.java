@@ -50,7 +50,7 @@ public class UsbReceiver extends BroadcastReceiver
             actionUsbDeviceAttached(context, intent);
         }
         else if(ACTION_USB_DEVICE_DETACHED.equals(action)){
-            actionUsbDeviceDetached(context, intent);
+            actionUsbDeviceDetached();
         }
     }
 
@@ -111,7 +111,7 @@ public class UsbReceiver extends BroadcastReceiver
         usbManager.requestPermission(usbDevice, permissionIntent);
     }
 
-    private void actionUsbDeviceDetached(Context context, Intent usbPermissionIntent){
+    private void actionUsbDeviceDetached(){
         Log.d(TAG, "actionUsbDeviceDetached");
         synchronized (this){
             EventBus.getDefault().post(new DeviceDetachedEvent());
