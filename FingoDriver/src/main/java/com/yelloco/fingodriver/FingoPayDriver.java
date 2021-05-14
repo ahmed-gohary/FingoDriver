@@ -40,7 +40,7 @@ public class FingoPayDriver
 
     private FingoPayDriver(){
         this.fingoDevice = new FingoDevice();
-        CONSECUTIVE_SCAN_RESTING_INTERVAL = Storage.getInstance().getInt(StorageKey.CONSECUTIVE_SCAN_INTERVAL.name(), FingoConstants.ONE_SECOND);
+        CONSECUTIVE_SCAN_RESTING_INTERVAL = Storage.INSTANCE.getInt(StorageKey.CONSECUTIVE_SCAN_INTERVAL.name(), FingoConstants.ONE_SECOND);
     }
 
     public static FingoPayDriver getInstance() {
@@ -85,7 +85,7 @@ public class FingoPayDriver
     }
 
     public FingoErrorCode openDevice() {
-        String templateKeySeed = Storage.getInstance().getString(StorageKey.TEMPLATE_KEY.name());
+        String templateKeySeed = Storage.INSTANCE.getString(StorageKey.TEMPLATE_KEY.name());
         FingoErrorCode templateKeySeedErrorCode = this.setCryptoTemplateKey(templateKeySeed);;
         if(! FingoErrorCode.H1_OK.equals(templateKeySeedErrorCode)){
             Log.e(TAG, "Fingo Template Key Not set");

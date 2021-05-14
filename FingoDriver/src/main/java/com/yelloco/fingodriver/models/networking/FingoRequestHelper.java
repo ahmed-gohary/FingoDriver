@@ -34,7 +34,7 @@ public class FingoRequestHelper
 
     private void fillApiKey() {
         // add api_key
-        String api_key = Storage.getInstance().getString(StorageKey.API_KEY.name());
+        String api_key = Storage.getString(StorageKey.API_KEY.name());
         if(api_key != null && !api_key.startsWith("x-apikey")){
             api_key = "x-apikey " + api_key;
         }
@@ -43,28 +43,28 @@ public class FingoRequestHelper
 
     private void fillLocation() {
         // add location
-        String location = Storage.getInstance().getString(StorageKey.LOCATION.name());
+        String location = Storage.getString(StorageKey.LOCATION.name());
         this.headers.put(Key.LOCATION.getValue(), location);
     }
 
     private void fillTerminalId() {
         // add TerminalID
-        String terminalId = Storage.getInstance().getString(StorageKey.TERMINAL_ID.name());
+        String terminalId = Storage.getString(StorageKey.TERMINAL_ID.name());
         this.headers.put(Key.TERMINAL_ID.getValue(), terminalId);
     }
 
     private void fillPartnerId() {
         // add PartnerID
-        String partnerId = Storage.getInstance().getString(StorageKey.PARTNER_ID.name());
+        String partnerId = Storage.getString(StorageKey.PARTNER_ID.name());
         this.headers.put(Key.PARTNER_ID.getValue(), partnerId);
     }
 
     private void fillMerchantId(){
-        this.merchantId = Storage.getInstance().getString(StorageKey.MERCHANT_ID.name());
+        this.merchantId = Storage.getString(StorageKey.MERCHANT_ID.name());
     }
 
     private void fillCloudUrl(){
-        this.fingoCloudBaseUrl = Storage.getInstance().getString(StorageKey.FINGO_CLOUD_URL.name());
+        this.fingoCloudBaseUrl = Storage.getString(StorageKey.FINGO_CLOUD_URL.name());
     }
 
     private void fillDriverVersion(){

@@ -82,7 +82,7 @@ public class FingoModel implements FingoContract.Model
     public FingoModel(FingoContract.Presenter presenter, Context context){
         this.context = context;
         this.presenter = presenter;
-        this.canProceed = (FingoSDK.isSdkInitialized() && Storage.getInstance().getBoolean(StorageKey.PARAMS_STATUS.name(), false));
+        this.canProceed = (FingoSDK.isSdkInitialized() && Storage.getBoolean(StorageKey.PARAMS_STATUS.name(), false));
         this.fingoPayDriver = FingoPayDriver.getInstance();
         this.fingoRequestHelper = new FingoRequestHelper();
 
@@ -107,7 +107,7 @@ public class FingoModel implements FingoContract.Model
 
         operationCancelled = false;
         this.presenter.onProcessingStarted();
-        this.canProceed = (FingoSDK.isSdkInitialized() && Storage.getInstance().getBoolean(StorageKey.PARAMS_STATUS.name(), false));
+        this.canProceed = (FingoSDK.isSdkInitialized() && Storage.getBoolean(StorageKey.PARAMS_STATUS.name(), false));
 
         if(canProceed && !retrofitInitialized){
             retrofitInitialized = true;
@@ -128,7 +128,7 @@ public class FingoModel implements FingoContract.Model
         }
 
         if(! this.canProceed){
-            if(!Storage.getInstance().getBoolean(StorageKey.PARAMS_STATUS.name(), false)){
+            if(!Storage.getBoolean(StorageKey.PARAMS_STATUS.name(), false)){
                 this.presenter.onProcessingFinished(this.buildProcessingFinishedEvent(false, FingoErrorCode.H1_SDK_PARAMS_NOT_SET));
             }
             else{
