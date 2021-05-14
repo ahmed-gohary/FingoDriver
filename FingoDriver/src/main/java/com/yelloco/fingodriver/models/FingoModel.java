@@ -10,6 +10,7 @@ import android.util.Pair;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.yelloco.fingodriver.FingoConstants;
+import com.yelloco.fingodriver.FingoPayDriver;
 import com.yelloco.fingodriver.FingoSDK;
 import com.yelloco.fingodriver.callbacks.FingoContract;
 import com.yelloco.fingodriver.enums.Currency;
