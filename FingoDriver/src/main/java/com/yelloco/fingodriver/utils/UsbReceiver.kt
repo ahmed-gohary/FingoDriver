@@ -7,7 +7,6 @@ import android.content.Intent
 import android.hardware.usb.UsbDevice
 import android.hardware.usb.UsbManager
 import android.util.Log
-import com.yelloco.fingodriver.FingoPayDriver
 import com.yelloco.fingodriver.models.FingoDevice
 import com.yelloco.fingodriver.models.events.DeviceAttachedEvent
 import com.yelloco.fingodriver.models.events.DeviceDetachedEvent

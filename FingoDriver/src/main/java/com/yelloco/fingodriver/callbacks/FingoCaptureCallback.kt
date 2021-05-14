@@ -1,5 +1,5 @@
 package com.yelloco.fingodriver.callbacks
 
-internal interface FingoCaptureCallback {
+interface FingoCaptureCallback {
     fun onCaptureStarted()
 }

@@ -1,7 +1,6 @@
 package com.yelloco.fingodriver.utils
 
 import android.util.Log
-import com.yelloco.fingodriver.FingoConstants
 import com.yelloco.fingodriver.enums.FingoErrorCode
 import com.yelloco.fingodriver.enums.StorageKey
 

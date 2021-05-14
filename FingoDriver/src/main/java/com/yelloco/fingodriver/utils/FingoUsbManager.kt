@@ -6,7 +6,6 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.hardware.usb.UsbManager
 import android.util.Log
-import com.yelloco.fingodriver.FingoConstants
 import com.yelloco.fingodriver.enums.FingoErrorCode
 
 class FingoUsbManager(private val context: Context)
