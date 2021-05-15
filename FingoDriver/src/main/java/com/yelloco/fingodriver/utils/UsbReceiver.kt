@@ -7,6 +7,7 @@ import android.content.Intent
 import android.hardware.usb.UsbDevice
 import android.hardware.usb.UsbManager
 import android.util.Log
+import com.yelloco.fingodriver.FingoPayDriver
 import com.yelloco.fingodriver.models.FingoDevice
 import com.yelloco.fingodriver.models.events.DeviceAttachedEvent
 import com.yelloco.fingodriver.models.events.DeviceDetachedEvent
@@ -51,8 +52,7 @@ class UsbReceiver(
             // reference to the attached device
             val device: UsbDevice? =
                 usbPermissionIntent.getParcelableExtra(UsbManager.EXTRA_DEVICE) as UsbDevice?
-            val fingoPayDriver: FingoPayDriver = FingoPayDriver.getInstance()
-            val fingoDevice: FingoDevice = fingoPayDriver.fingoDevice
+            val fingoDevice: FingoDevice = FingoPayDriver.activeDevice
 
             if(usbPermissionIntent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)){
                 device?.let {

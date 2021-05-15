@@ -9,7 +9,7 @@ interface IdentifyApi
 {
     @POST("identify")
     fun identify(
-        @HeaderMap headers: Map<String?, String?>?,
-        @Body identifyRequest: IdentifyRequest?
+        @HeaderMap headers: Map<String, String?>,
+        @Body identifyRequest: IdentifyRequest
     ): Call<IdentifyResponse?>?
 }

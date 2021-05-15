@@ -9,7 +9,7 @@ interface PaymentApi
 {
     @POST("payments")
     fun pay(
-        @HeaderMap headers: Map<String?, String?>?,
-        @Body paymentRequest: PaymentRequest?
+        @HeaderMap headers: Map<String, String?>,
+        @Body paymentRequest: PaymentRequest
     ): Call<PaymentResponse?>?
 }

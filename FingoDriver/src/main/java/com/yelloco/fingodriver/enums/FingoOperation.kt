@@ -1,6 +1,6 @@
 package com.yelloco.fingodriver.enums
 
-internal enum class FingoOperation {
+enum class FingoOperation {
     IDENTIFY,
     ENROLLMENT,
     PAYMENT,

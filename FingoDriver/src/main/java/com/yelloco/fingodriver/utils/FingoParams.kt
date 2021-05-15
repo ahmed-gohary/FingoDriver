@@ -1,12 +1,13 @@
 package com.yelloco.fingodriver.utils
 
 import android.util.Log
+import com.yelloco.fingodriver.FingoFactory
 import com.yelloco.fingodriver.enums.FingoErrorCode
 import com.yelloco.fingodriver.enums.StorageKey
 
 class FingoParams
 {
-    var consecutiveScanInterval = 0
+    var consecutiveScanInterval = 0L
     var cloudUrl: String? = null
     var partnerId: String? = null
     var apiKey: String? = null
@@ -17,7 +18,7 @@ class FingoParams
 
     constructor() {}
     constructor(
-        consecutiveScanInterval: Int,
+        consecutiveScanInterval: Long,
         cloudUrl: String?,
         partnerId: String?,
         apiKey: String?,
@@ -69,8 +70,8 @@ class FingoParams
     }
 
     fun loadParams() {
-        if (consecutiveScanInterval < FingoConstants.ONE_SECOND) {
-            consecutiveScanInterval = FingoConstants.ONE_SECOND
+        if (consecutiveScanInterval < FingoFactory.Constants.ONE_SECOND) {
+            consecutiveScanInterval = FingoFactory.Constants.ONE_SECOND
         }
         Storage.storeString(StorageKey.FINGO_CLOUD_URL.name, cloudUrl)
         Storage.storeString(StorageKey.PARTNER_ID.name, partnerId)
@@ -78,7 +79,7 @@ class FingoParams
         Storage.storeString(StorageKey.TERMINAL_ID.name, terminalId)
         Storage.storeString(StorageKey.API_KEY.name, apiKey)
         Storage.storeString(StorageKey.TEMPLATE_KEY.name, templateKeySeed)
-        Storage.storeInt(StorageKey.CONSECUTIVE_SCAN_INTERVAL.name, consecutiveScanInterval)
+        Storage.storeLong(StorageKey.CONSECUTIVE_SCAN_INTERVAL.name, consecutiveScanInterval)
         Storage.storeString(StorageKey.LOCATION.name, if (location == null) "" else location)
         Storage.storeBoolean(StorageKey.PARAMS_STATUS.name, true)
     }
@@ -96,13 +97,10 @@ class FingoParams
                 fingoParams.apiKey = Storage.getString(StorageKey.API_KEY.name)
                 fingoParams.templateKeySeed = Storage.getString(StorageKey.TEMPLATE_KEY.name)
                 fingoParams.consecutiveScanInterval =
-                    Storage.getInt(StorageKey.CONSECUTIVE_SCAN_INTERVAL.name, FingoConstants.ONE_SECOND)
+                    Storage.getLong(StorageKey.CONSECUTIVE_SCAN_INTERVAL.name, FingoFactory.Constants.ONE_SECOND)
                 fingoParams.location = Storage.getString(StorageKey.LOCATION.name)
                 return fingoParams
             }
-get() {
-        return com.yelloco.fingodriver.utils.FingoParams.storedParams
-    }
 
         fun status(): Boolean {
             return Storage.getBoolean(StorageKey.PARAMS_STATUS.name, false)

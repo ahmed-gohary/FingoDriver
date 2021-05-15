@@ -5,7 +5,11 @@ import com.yelloco.fingodriver.FingoFactory
 
 class FingoDevice {
     var manufacturerName: String? = null
-    private var productName: String? = null
+    var productName: String? = null
+        set(value) {
+            field = value
+            isFingoDevice = FingoFactory.Constants.FINGO_DEVICE_NAME == this.productName
+        }
     var version: String? = null
     var serialNumber: String? = null
     var h1Client: H1Client? = null
@@ -35,15 +39,6 @@ class FingoDevice {
         this.isUsagePermissionGranted = usagePermissionGranted
         this.isDeviceOpened = deviceOpened
         this.isFingoDevice = FingoFactory.Constants.FINGO_DEVICE_NAME == this.productName
-    }
-
-    fun getProductName(): String? {
-        return productName
-    }
-
-    fun setProductName(productName: String?) {
-        this.productName = productName
-        isFingoDevice = FingoFactory.Constants.FINGO_DEVICE_NAME == this.productName
     }
 
     fun initialize() {

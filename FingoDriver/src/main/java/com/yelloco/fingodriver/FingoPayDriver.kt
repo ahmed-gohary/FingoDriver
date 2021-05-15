@@ -20,7 +20,7 @@ object FingoPayDriver
     // Constants
     private const val TAG = "FingoPayDriver"
     private const val DEFAULT_TIMEOUT = FingoFactory.Constants.TWENTY_SECS
-    val CONSECUTIVE_SCAN_RESTING_INTERVAL: Int = Storage.getInt(
+    val CONSECUTIVE_SCAN_RESTING_INTERVAL: Long = Storage.getLong(
         StorageKey.CONSECUTIVE_SCAN_INTERVAL.name, FingoFactory.Constants.ONE_SECOND)
 
     // Members
@@ -29,6 +29,10 @@ object FingoPayDriver
     private var captureSessionActive: Boolean = false
     private var templateKeySeedSet: Boolean = false
     private var isLockActive: Boolean = false
+
+    // getters
+    val activeDevice: FingoDevice
+        get() = fingoDevice
 
     private fun getH1Client(): H1Client? {
         return if(this.fingoDevice.isUsagePermissionGranted){
@@ -104,12 +108,12 @@ object FingoPayDriver
         return this.capture(DEFAULT_TIMEOUT, fingoCaptureCallback)
     }
 
-    fun capture(timeout: Int): Pair<FingoErrorCode, ByteArray?> {
+    fun capture(timeout: Long): Pair<FingoErrorCode, ByteArray?> {
         return this.capture(timeout, null)
     }
 
     fun capture(
-        timeoutInMillis: Int = DEFAULT_TIMEOUT,
+        timeoutInMillis: Long = DEFAULT_TIMEOUT,
         fingoCaptureCallback: FingoCaptureCallback? = null
     ): Pair<FingoErrorCode, ByteArray?> {
         var captureTimeout = timeoutInMillis
@@ -128,7 +132,7 @@ object FingoPayDriver
         return try {
             captureSessionActive = true
             fingoCaptureCallback?.onCaptureStarted()
-            val captureSessionData = h1Client.capture(captureTimeout)
+            val captureSessionData = h1Client.capture(captureTimeout.toInt())
             captureSessionActive = false
             Log.d(TAG, "Fingo capture session finished successfully")
             scannerResting = true
@@ -243,7 +247,9 @@ object FingoPayDriver
     fun closeDevice(): FingoErrorCode {
         val h1Client = fingoDevice.h1Client
         return try {
-            h1Client.closeDevice()
+            h1Client?.closeDevice() ?: kotlin.run {
+                Log.e(TAG, "closeDevice: Failed to close device NULL")
+            }
             fingoDevice.initialize()
             Log.d(TAG, "Fingo device closed successfully")
             FingoErrorCode.H1_OK

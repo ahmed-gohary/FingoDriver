@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.hardware.usb.UsbManager
 import android.util.Log
+import com.yelloco.fingodriver.FingoFactory
 import com.yelloco.fingodriver.enums.FingoErrorCode
 
 class FingoUsbManager(private val context: Context)
@@ -40,7 +41,7 @@ class FingoUsbManager(private val context: Context)
         for (deviceName in devices.keys) {
             val usbDevice = devices[deviceName]
             if (usbDevice != null) {
-                if (FingoConstants.FINGO_DEVICE_NAME == usbDevice.productName) {
+                if (FingoFactory.Constants.FINGO_DEVICE_NAME == usbDevice.productName) {
                     if (!usbManager.hasPermission(usbDevice)) {
                         // if the device doesn't have permission then ask for it
                         Log.d(TAG, "Requesting permission for device for the first time")

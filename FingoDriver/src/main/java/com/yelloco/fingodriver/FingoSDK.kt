@@ -45,7 +45,7 @@ object FingoSDK
         }
         isSdkInitialized = true
         Log.d(TAG, "Fingo SDK Initialized")
-        EventBus.getDefault().register(FingoPayDriver.getInstance())
+        EventBus.getDefault().register(FingoPayDriver)
         fingoUsbManager!!.checkAttachedDevices()
         return FingoErrorCode.H1_OK
     }
@@ -71,7 +71,7 @@ object FingoSDK
     }
 
     fun about(uniqueID: String?): String {
-        return if (FingoConstants.KAN_UNIQUE_ID == uniqueID) {
+        return if (FingoFactory.Constants.KAN_UNIQUE_ID == uniqueID) {
             "The Library And It's Rights Belongs to KAN (www.kan4u.com)\nplease contact info@kan4u.com for inquiries"
         } else {
             "Disclaimer and Its rights are returned here"
@@ -79,10 +79,10 @@ object FingoSDK
     }
 
     fun destroy() {
-        Log.d(TAG, "Is Fingo Initialized: " + isSdkInitialized)
+        Log.d(TAG, "Is Fingo Initialized: $isSdkInitialized")
         if (!isSdkInitialized) return
         isSdkInitialized = false
-        EventBus.getDefault().unregister(FingoPayDriver.getInstance())
+        EventBus.getDefault().unregister(FingoPayDriver)
         fingoUsbManager!!.destroy()
     }
 }

@@ -32,14 +32,14 @@ interface FingoContract {
 
     interface Model {
         operator fun invoke(fingoOperation: FingoOperation?)
-        fun identify(timeoutInMillis: Int)
-        fun enroll(timeoutInMillis: Int)
+        fun identify(timeoutInMillis: Long)
+        fun enroll(timeoutInMillis: Long)
         fun payment(
             totalAmount: Int,
             currency: Currency?,
             totalDiscount: Int,
             posData: PosData?,
-            timeoutInMillis: Int
+            timeoutInMillis: Long
         )
 
         fun refund(
@@ -47,7 +47,7 @@ interface FingoContract {
             transactionIdToRefund: String?,
             gatewayTransactionIdToRefund: String?,
             terminalData: TerminalData?,
-            timeoutInMillis: Int
+            timeoutInMillis: Long
         )
 
         fun cancel()

@@ -9,7 +9,7 @@ interface RefundApi
 {
     @POST("refunds")
     fun refund(
-        @HeaderMap headers: Map<String?, String?>?,
-        @Body refundRequest: RefundRequest?
+        @HeaderMap headers: Map<String, String?>,
+        @Body refundRequest: RefundRequest
     ): Call<RefundResponse?>?
 }
