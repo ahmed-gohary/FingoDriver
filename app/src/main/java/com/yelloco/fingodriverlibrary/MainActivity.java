@@ -11,7 +11,6 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.yelloco.fingodriver.FingoConstants;
 import com.yelloco.fingodriver.FingoPayDriver;
 import com.yelloco.fingodriver.FingoSDK;
 import com.yelloco.fingodriver.callbacks.FingoContract;
@@ -51,21 +50,21 @@ public class MainActivity extends AppCompatActivity implements FingoContract.Fin
         setContentView(R.layout.activity_main);
 
         FingoParams fingoParams = new FingoParams();
-//        fingoParams.setCloudUrl("https://sandbox.fingo.to/api/");
-//        fingoParams.setPartnerId("kan-dev");
-//        fingoParams.setMerchantId("1dd56035-d914-44bb-b806-3b85f714fa91");
-//        fingoParams.setTerminalId("POS-540-002");
-//        fingoParams.setApiKey("1761900a-bc4b-4406-a0e4-eae4df1a38cd");
+        fingoParams.setCloudUrl("https://sandbox.fingo.to/api/");
+        fingoParams.setPartnerId("kan-dev");
+        fingoParams.setMerchantId("1dd56035-d914-44bb-b806-3b85f714fa91");
+        fingoParams.setTerminalId("POS-540-002");
+        fingoParams.setApiKey("1761900a-bc4b-4406-a0e4-eae4df1a38cd");
         fingoParams.setTemplateKeySeed("FvCoreSample1");
 
-        FingoSDK.initialize(this, new FingoRequestLogger() {
+        FingoSDK.INSTANCE.initialize(this, new FingoRequestLogger() {
             @Override
             public void onLogDataAvailable(String s) {
                 Log.d(TAG, "onLogDataAvailable: " + s);
             }
         });
 
-        FingoErrorCode fingoErrorCode = FingoSDK.setFingoParams(fingoParams);
+        FingoErrorCode fingoErrorCode = FingoSDK.INSTANCE.setFingoParams(fingoParams);
 
         Log.d(TAG, "setFingoParams() returned: " + fingoErrorCode);
 
@@ -112,20 +111,9 @@ public class MainActivity extends AppCompatActivity implements FingoContract.Fin
         refund.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                FingoParams fingoParams = new FingoParams();
-                fingoParams.setCloudUrl("https://sandbox.fingo.to/api/");
-                fingoParams.setPartnerId("kan-dev");
-                fingoParams.setMerchantId("1dd56035-d914-44bb-b806-3b85f714fa91");
-                fingoParams.setTerminalId("POS-540-002");
-                fingoParams.setApiKey("1761900a-bc4b-4406-a0e4-eae4df1a38cd");
-                fingoParams.setTemplateKeySeed("FvCoreSample1");
-                FingoErrorCode fingoErrorCode = FingoSDK.setFingoParams(fingoParams);
-
-                Log.d(TAG, "setFingoParams() returned: " + fingoErrorCode);
-
-//                TerminalData terminalData = new TerminalData();
-//                terminalData.setLocation("Cairo");
-//                fingoPresenter.refund(100, "8c04ad1b-e1e8-4752-b50c-e3c9dc70ad11", "96577222", terminalData, TIMEOUT);
+                TerminalData terminalData = new TerminalData();
+                terminalData.setLocation("Cairo");
+                fingoPresenter.refund(100, "8c04ad1b-e1e8-4752-b50c-e3c9dc70ad11", "96577222", terminalData, TIMEOUT);
             }
         });
     }
@@ -202,7 +190,7 @@ public class MainActivity extends AppCompatActivity implements FingoContract.Fin
 
     @Override
     protected void onDestroy() {
-        FingoSDK.destroy();
+        FingoSDK.INSTANCE.destroy();
         super.onDestroy();
     }
 }
